@@ -1,0 +1,53 @@
+---
+title: "Dummydata"
+output: html_document
+date: "2025-08-13"
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(lme4)
+library(tidyverse)
+library(ggplot2)
+library(broom)
+
+abcd= read.csv("simulated_data_with_days_above_90.csv")
+```
+
+### Model 1 observing effects of covariates without heat as a moderator
+
+```{r, include=FALSE}
+model_1 <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi_addr1_national_prcnt + 
+     sdev_y_ders_total +
+     mh_y_upps_pers_sum+
+     sex+
+     Days_Above_90+
+     le_l_coi_addr1_coi_total_national_score+
+     le_l_svi_addr1_total_prcntile+
+     mh_y_upps_nurg_sum, data = abcd)
+```
+
+```{r}
+summary(model_1)
+plot(model_1)
+```
+
+### Model 2 observing effects of covariates with heat as a moderator
+
+```{r, include=FALSE}
+model_2 <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi_addr1_national_prcnt*Days_Above_90 + 
+     sdev_y_ders_total *Days_Above_90 +
+     mh_y_upps_pers_sum*Days_Above_90 +
+     sex*Days_Above_90+
+     le_l_coi_addr1_coi_total_national_score*Days_Above_90 +
+     le_l_svi_addr1_total_prcntile*Days_Above_90 +
+     mh_y_upps_nurg_sum*Days_Above_90 , data = abcd)
+```
+
+```{r}
+summary(model_2)
+plot(model_2)
+```
+
