@@ -12,6 +12,8 @@ library(lme4)
 library(tidyverse)
 library(ggplot2)
 library(broom)
+library(dplyr)
+
 
 abcd= read.csv("simulated_data_with_days_above_90.csv")
 ```
@@ -27,11 +29,13 @@ model_1 <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi_addr1_national_prcnt +
      le_l_coi_addr1_coi_total_national_score+
      le_l_svi_addr1_total_prcntile+
      mh_y_upps_nurg_sum, data = abcd)
+
+
+
 ```
 
 ```{r}
 summary(model_1)
-plot(model_1)
 ```
 
 ### Model 2 observing effects of covariates with heat as a moderator
@@ -48,6 +52,33 @@ model_2 <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi_addr1_national_prcnt*Days_Abov
 
 ```{r}
 summary(model_2)
-plot(model_2)
 ```
+
+## The differences in $R^2$... 
+
+```{r}
+#R2
+r2model1 = summary(model_1)$r.squared
+r2model2 = summary(model_2)$r.squared
+
+# adj R2
+r2adjmodel1 = summary(model_1)$adj.r.squared
+r2adjmodel2 = summary(model_2)$adj.r.squared
+
+# data frame for comparison
+df = data.frame(
+  Models = c("With moderator", "Without moderator"),
+  R2 = c(r2model1, r2model2),
+  AdjustedR2= c(r2adjmodel1, r2adjmodel2)
+)
+print(df)
+```
+
+
+
+
+
+
+
+
 
