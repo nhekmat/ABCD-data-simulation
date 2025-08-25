@@ -53,7 +53,7 @@ dwplot(model_1,
     "mh_y_upps_nurg_sum" = "UPPS-P Negative Urgency"
   )) +
   geom_vline(xintercept = 0, colour = "red", linetype = 2, linewidth = 1) +
-  ggtitle("Dot Whisker Plot of Coefficients for Model 1") +
+  ggtitle("Dot Whisker Plot of Coefficients for Model 1 (No Moderator)") +
   xlab("Coefficient Estimates") +
   ylab("Covariates") +
   theme_bw()
@@ -90,7 +90,7 @@ dwplot(interaction,
     "Days_Above_90:mh_y_upps_nurg_sum" = "Negative Urgency × Heat"
   )) +
   geom_vline(xintercept = 0, colour = "red", linetype = 2, linewidth = 1) +
-  ggtitle("Moderation Effects with Heat Days") +
+  ggtitle("Dot Whisker Plot of Coefficients for Model 2 (With Moderator)") +
   xlab("Coefficient Estimates") +
   ylab("Covariates") +
   theme_bw()
@@ -109,7 +109,7 @@ r2adjmodel2 = summary(model_2)$adj.r.squared
 
 # data frame for comparison
 df = data.frame(
-  Models = c("With moderator", "Without moderator"),
+  Models = c("Dot Whisker Plot of Coefficients for Model 2 (Moderator)"),
   R2 = c(r2model1, r2model2),
   AdjustedR2= c(r2adjmodel1, r2adjmodel2)
 )
@@ -117,7 +117,11 @@ print(df)
 ```
 
 
+## Conclusion...
 
+ * **The model has  low adjusted $R^2$, with the moderator it increases a bit (still pretty low).**
+* **With moderation effects, Social Vulnerability Index is the only significant covariate.**
+ * **It may be interesting to see how this changes state by state since this model looks at things nationally.**
 
 
 
