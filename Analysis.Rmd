@@ -1,5 +1,5 @@
 ---
-title: "Dummydata"
+title: "ABCD Simulations for Manuscript"
 output:
   html_document: default
   pdf_document: default
@@ -52,7 +52,7 @@ dwplot(model_1,
     "le_l_svi_addr1_total_prcntile" = "SVI Percentile",
     "mh_y_upps_nurg_sum" = "UPPS-P Negative Urgency"
   )) +
-  geom_vline(xintercept = 0, colour = "red", linetype = 2, size = 1) +
+  geom_vline(xintercept = 0, colour = "red", linetype = 2, linewidth = 1) +
   ggtitle("Dot Whisker Plot of Coefficients for Model 1") +
   xlab("Coefficient Estimates") +
   ylab("Covariates") +
@@ -89,15 +89,14 @@ dwplot(interaction,
     "Days_Above_90:le_l_svi_addr1_total_prcntile" = "SVI × Heat",
     "Days_Above_90:mh_y_upps_nurg_sum" = "Negative Urgency × Heat"
   )) +
-  geom_vline(xintercept = 0, colour = "red", linetype = 2, size = 1) +
+  geom_vline(xintercept = 0, colour = "red", linetype = 2, linewidth = 1) +
   ggtitle("Moderation Effects with Heat Days") +
   xlab("Coefficient Estimates") +
   ylab("Covariates") +
   theme_bw()
 ```
-```
 
-## The differences in $R^2$... 
+## Finally... The differences in $R^2$... 
 
 ```{r}
 #R2
