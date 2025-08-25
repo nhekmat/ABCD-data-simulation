@@ -1,8 +1,10 @@
 ---
 title: "Dummydata"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 date: "2025-08-13"
-editor_options: 
+editor_options:
   chunk_output_type: console
 ---
 
@@ -13,8 +15,7 @@ library(tidyverse)
 library(ggplot2)
 library(broom)
 library(dplyr)
-
-
+library(dotwhisker)
 abcd= read.csv("simulated_data_with_days_above_90.csv")
 ```
 
@@ -29,13 +30,33 @@ model_1 <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi_addr1_national_prcnt +
      le_l_coi_addr1_coi_total_national_score+
      le_l_svi_addr1_total_prcntile+
      mh_y_upps_nurg_sum, data = abcd)
-
-
-
 ```
 
 ```{r}
 summary(model_1)
+```
+
+
+```{r}
+dwplot(model_1,
+       dot_args = list(color = "blue", size = 2.5),
+       whisker_args = list(color="blue",size = 1)) %>%
+  relabel_predictors(c(
+    "(Intercept)" = "Intercept",
+    "le_l_adi_addr1_national_prcnt" = "Area Deprivation Index (%)",
+    "sdev_y_ders_total" = "DERS Total Score", 
+    "mh_y_upps_pers_sum" = "UPPS-P Perseverance",
+    "sex" = "Sex",
+    "Days_Above_90" = "Days Above 90°F",
+    "le_l_coi_addr1_coi_total_national_score" = "COI Total Score",
+    "le_l_svi_addr1_total_prcntile" = "SVI Percentile",
+    "mh_y_upps_nurg_sum" = "UPPS-P Negative Urgency"
+  )) +
+  geom_vline(xintercept = 0, colour = "red", linetype = 2, size = 1) +
+  ggtitle("Dot Whisker Plot of Coefficients for Model 1") +
+  xlab("Coefficient Estimates") +
+  ylab("Covariates") +
+  theme_bw()
 ```
 
 ### Model 2 observing effects of covariates with heat as a moderator
@@ -52,6 +73,28 @@ model_2 <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi_addr1_national_prcnt*Days_Abov
 
 ```{r}
 summary(model_2)
+```
+
+```{r}
+interaction <- tidy(model_2) %>% filter(str_detect(term, ":"))
+dwplot(interaction,
+       dot_args = list(color = "blue", size = 3),
+       whisker_args = list(color = "blue", size = 1.5)) %>%
+  relabel_predictors(c(
+    "le_l_adi_addr1_national_prcnt:Days_Above_90" = "ADI × Heat",
+    "Days_Above_90:sdev_y_ders_total" = "DERS × Heat", 
+    "Days_Above_90:mh_y_upps_pers_sum" = "Perseverance × Heat",
+    "Days_Above_90:sex" = "Sex × Heat",
+    "Days_Above_90:le_l_coi_addr1_coi_total_national_score" = "COI × Heat",
+    "Days_Above_90:le_l_svi_addr1_total_prcntile" = "SVI × Heat",
+    "Days_Above_90:mh_y_upps_nurg_sum" = "Negative Urgency × Heat"
+  )) +
+  geom_vline(xintercept = 0, colour = "red", linetype = 2, size = 1) +
+  ggtitle("Moderation Effects with Heat Days") +
+  xlab("Coefficient Estimates") +
+  ylab("Covariates") +
+  theme_bw()
+```
 ```
 
 ## The differences in $R^2$... 
