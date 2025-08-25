@@ -53,10 +53,11 @@ dwplot(model_1,
     "mh_y_upps_nurg_sum" = "UPPS-P Negative Urgency"
   )) +
   geom_vline(xintercept = 0, colour = "red", linetype = 2, linewidth = 1) +
-  ggtitle("Dot Whisker Plot of Coefficients for Model 1 (No Moderator)") +
+  ggtitle(str_wrap("Dot Whisker Plot of Coefficients for Model 1 (No Moderator)", width =35)) +
   xlab("Coefficient Estimates") +
   ylab("Covariates") +
-  theme_bw()
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ### Model 2 observing effects of covariates with heat as a moderator
@@ -90,10 +91,11 @@ dwplot(interaction,
     "Days_Above_90:mh_y_upps_nurg_sum" = "Negative Urgency × Heat"
   )) +
   geom_vline(xintercept = 0, colour = "red", linetype = 2, linewidth = 1) +
-  ggtitle("Dot Whisker Plot of Coefficients for Model 2 (With Moderator)") +
+  ggtitle(str_wrap("Dot Whisker Plot of Coefficients for Model 2 (With Moderator)", width = 35)) +
   xlab("Coefficient Estimates") +
   ylab("Covariates") +
-  theme_bw()
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ## Finally... The differences in $R^2$... 
