@@ -16,6 +16,8 @@ library(ggplot2)
 library(broom)
 library(dplyr)
 library(dotwhisker)
+library(effectsize)
+library(pwr)
 abcd= read.csv("simulated_data_with_days_above_90.csv")
 ```
 
@@ -60,6 +62,16 @@ dwplot(model_1,
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
+## Post-hoc and effects size for model 1 (no moderator)
+
+```{r}
+# Eta squared
+eta_squared(model_1, partial = TRUE)
+
+# Standardized betas
+standardize_parameters(model_1)
+```
+
 ### Model 2 observing effects of covariates with heat as a moderator
 
 ```{r, include=FALSE}
@@ -98,6 +110,15 @@ dwplot(interaction,
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
+## Post-hoc and effects size for moderation effects of heat (Model 2)
+
+```{r}
+# eta squared
+eta_squared(model_2, partial = TRUE)
+# standardized betas
+standardize_parameters(model_2) 
+```
+
 ## Finally... The differences in $R^2$... 
 
 ```{r}
@@ -117,7 +138,6 @@ df = data.frame(
 )
 print(df)
 ```
-
 
 ## Conclusion...
 
