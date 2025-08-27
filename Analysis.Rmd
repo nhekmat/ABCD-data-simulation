@@ -22,7 +22,8 @@ library(dotwhisker)
 library(effectsize)
 library(pwr)
 # library(ggpubr)
-abcd= read.csv("simulated_data_with_days_above_90.csv")
+abcd= read.csv("data/simulated_data_with_family.csv")
+
 ```
 
 ```{r kyle_custom_function1, include=FALSE}
