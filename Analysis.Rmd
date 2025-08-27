@@ -1,8 +1,9 @@
 ---
 title: "ABCD Simulations for Manuscript"
+author: "Kyle Baacke and Michael Nima Hekmat"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 date: "2025-08-13"
 editor_options:
   chunk_output_type: console
@@ -10,6 +11,8 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(psych)
+library(agricolae)
 library(lme4)
 library(tidyverse)
 library(ggplot2)
@@ -19,6 +22,140 @@ library(dotwhisker)
 library(effectsize)
 library(pwr)
 abcd= read.csv("simulated_data_with_days_above_90.csv")
+```
+
+# Kyle functions
+
+# Imports
+
+```{r, include=FALSE}
+library(psych)
+library(ggplot2)
+# library(ggpubr)
+library(car)
+library(dplyr)
+library(pwr)
+library(effectsize)
+
+```
+
+# Custom Functions
+
+```{r}
+descriptives = function(df, vars, titles){
+  ind = 1
+  out = data.frame(
+    mean=numeric(0),
+    SD=numeric(0),
+    SS=numeric(0),
+    Var=numeric(0),
+    Skewness=numeric(0),
+    kurtosis=numeric(0),
+    std_error=numeric(0),
+    N=numeric(0)
+  )
+  for (v in vars){
+    print(v)
+    var = df[v]
+    row_vector = c(
+      mean(var[!is.na(var)]),
+      sd(var[!is.na(var)]),
+      sum((mean(var[!is.na(var)])-var[!is.na(var)])^2),
+      var(var[!is.na(var)]),
+      agricolae::skewness(var[!is.na(var)]),
+      agricolae::kurtosis(var[!is.na(var)]),
+      sd(var[!is.na(var)])/sqrt(length(!is.na(var))),
+      length(var[!is.na(var)])
+    )
+    print(row_vector)
+    out[ind,] = row_vector
+    ind = ind+1
+  }
+  row.names(out) = titles
+  print(format(out,scientific=F, digits=3))
+  return(out)
+}
+```
+
+```{r}
+#https://www.statisticshowto.com/cohens-f-statistic-definition-formulas/
+# Power: https://www.r-bloggers.com/2021/05/power-analysis-in-statistics-with-r/
+#    pwr.f2.test {pwr}
+summary_dfs = list()
+detail_dfs = list()
+lm_summary_dataframe = function(label_col_1, label_col_2, label_col_3, label_col_4, lm_object){
+  # label_col_2, label_col_3, terms, Adjusted_R_Squared, F, df_1, df_2, p_value, residual_SE, n_terms
+  summary_obj = summary(lm_object)
+  res_data_frame = data.frame(
+    label_col_1 = c(label_col_1),
+    label_col_2 = c(label_col_2),
+    label_col_3 = c(label_col_3),
+    label_col_4 = c(label_col_4),
+    terms = c(toString(lm_object$terms)),
+    adjusted_r_squared = c(summary_obj$adj.r.squared),
+    f = c(summary_obj$fstatistic['value']), 
+    df_1 = c(summary_obj$fstatistic['numdf']), 
+    df_2 = c(summary_obj$fstatistic['dendf']), 
+    p_value = c(pf(
+      summary_obj$fstatistic['value'],
+      summary_obj$fstatistic['numdf'],
+      summary_obj$fstatistic['dendf'],
+      lower.tail=F
+      )),
+    # residual_SE = c(), # TODO
+    n_terms = c(length(names(lm_object$model))-1) 
+  )
+  return(res_data_frame)
+}
+
+lm_detail_dataframe = function(label_col_1, label_col_2, label_col_3, label_col_4, lm_object){
+  # subject_subset, variable_subset, variable_name, Estimate, Std_Error, t_value, p_value, VIF, beta, partial_eta_squared
+  coef_df = as.data.frame(summary(lm_object)$coefficients)
+  # coef_df = coef_df[c(2:length(rownames(coef_df))),]
+  coef_df$variable_name = rownames(coef_df)
+  tryCatch(
+    {
+      coef_df$VIF = c(c(NA),vif(lm_object))
+    },
+    error=function(e){
+      # print(e)
+      coef_df$VIF = c(NA)
+    }
+  )
+  tryCatch(
+    {
+      coef_df$Cohens_f2_partial_vec = c(NA,cohens_f_squared(lm_object)$Cohens_f2_partial)
+      coef_df$Eta2_partial_vec = c(NA,eta_squared(lm_object)$Eta2_partial)
+      coef_df$r2_partial_vec = c(NA,r2_semipartial(lm_object)$r2_semipartial)
+    },
+    error=function(e){
+      coef_df$Cohens_f2_partial_vec = NA
+      coef_df$Eta2_partial_vec = NA
+      coef_df$r2_partial_vec = NA
+    }
+  )
+  
+  power_vec = c()
+  summary_obj = summary(lm_object)
+  for (f_val in coef_df$Cohens_f2_partial_vec){
+    print(f_val)
+    tryCatch(
+      {
+        power = pwr.f2.test(u=summary_obj$df[1]-1, v=summary_obj$df[2], f2=f_val, sig.level=0.05)$power
+      },
+      error=function(e){
+        power = c(NA)
+      }
+    )
+    power_vec = c(power_vec, power)
+  }
+  coef_df$power = unlist(power_vec, use.names = FALSE)
+  coef_df$label_col_1 = label_col_1
+  coef_df$label_col_2 = label_col_2
+  coef_df$label_col_3 = label_col_3
+  coef_df$label_col_4 = label_col_4
+  return(coef_df)
+}
 ```
 
 ### Model 1 observing effects of covariates without heat as a moderator
@@ -37,7 +174,6 @@ model_1 <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi_addr1_national_prcnt +
 ```{r}
 summary(model_1)
 ```
-
 
 ```{r}
 dwplot(model_1,
@@ -62,7 +198,7 @@ dwplot(model_1,
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-## Post-hoc and effects size for model 1 (no moderator)
+## Model 1 Post-hoc and effects size (no moderator)
 
 ```{r}
 # Eta squared
@@ -110,7 +246,7 @@ dwplot(interaction,
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-## Post-hoc and effects size for moderation effects of heat (Model 2)
+## Model 2 Post-hoc and effects size for moderation effects of heat
 
 ```{r}
 # eta squared
@@ -119,7 +255,7 @@ eta_squared(model_2, partial = TRUE)
 standardize_parameters(model_2) 
 ```
 
-## Finally... The differences in $R^2$... 
+## Finally... The differences in $R^2$...
 
 ```{r}
 #R2
@@ -139,14 +275,8 @@ df = data.frame(
 print(df)
 ```
 
-## Conclusion...
+## Conclusions...
 
- * **The model has  low adjusted $R^2$, with the moderator it increases a bit (still pretty low).**
-* **With moderation effects, Social Vulnerability Index is the only significant covariate.**
- * **It may be interesting to see how this changes state by state since this model looks at things nationally.**
-
-
-
-
-
-
+-   **The model has low adjusted** $R^2$, with the moderator it increases a bit (still pretty low).
+-   **With moderation effects, Social Vulnerability Index is the only significant covariate.**
+-   **It may be interesting to see how this changes state by state since this model looks at things nationally.**
