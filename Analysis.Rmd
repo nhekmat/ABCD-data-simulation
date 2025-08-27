@@ -2,8 +2,8 @@
 title: "ABCD Simulations for Manuscript"
 author: "Kyle Baacke and Michael Nima Hekmat"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 date: "2025-08-13"
 editor_options:
   chunk_output_type: console
@@ -21,27 +21,12 @@ library(dplyr)
 library(dotwhisker)
 library(effectsize)
 library(pwr)
+# library(ggpubr)
 abcd= read.csv("simulated_data_with_days_above_90.csv")
 ```
 
-# Kyle functions
-
-# Imports
-
-```{r, include=FALSE}
-library(psych)
-library(ggplot2)
-# library(ggpubr)
-library(car)
-library(dplyr)
-library(pwr)
-library(effectsize)
-
-```
-
-# Custom Functions
-
-```{r}
+```{r kyle_custom_function1, include=FALSE}
+# kyle custom function 1
 descriptives = function(df, vars, titles){
   ind = 1
   out = data.frame(
@@ -77,7 +62,18 @@ descriptives = function(df, vars, titles){
 }
 ```
 
-```{r}
+*Testing out kyle function*
+```{r testing, include=FALSE}
+vars <- c("mh_p_cbcl__synd__ext_sum", 
+          "le_l_adi_addr1_national_prcnt", 
+          "sdev_y_ders_total") #First select your relevant covariates
+titles<- c("Externalizing", "ADI", "DERS") #Give covariates nicer titles
+desc_table <- descriptives(abcd, vars, titles) #Generates description fucntion details
+desc_table
+```
+
+
+```{r kyle_custom_function2, include=FALSE}
 #https://www.statisticshowto.com/cohens-f-statistic-definition-formulas/
 # Power: https://www.r-bloggers.com/2021/05/power-analysis-in-statistics-with-r/
 #    pwr.f2.test {pwr}
@@ -158,9 +154,10 @@ lm_detail_dataframe = function(label_col_1, label_col_2, label_col_3, label_col_
 }
 ```
 
+
 ### Model 1 observing effects of covariates without heat as a moderator
 
-```{r, include=FALSE}
+```{r lm_model_1, include=FALSE}
 model_1 <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi_addr1_national_prcnt + 
      sdev_y_ders_total +
      mh_y_upps_pers_sum+
@@ -171,11 +168,25 @@ model_1 <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi_addr1_national_prcnt +
      mh_y_upps_nurg_sum, data = abcd)
 ```
 
-```{r}
+
+```{r lm_summary_dataframe, include=FALSE}
+summary_df <- lm_summary_dataframe(
+  label_col_1 = "Model_1",
+  label_col_2 = "NoHeatModerator",
+  label_col_3 = "MainEffects",
+  label_col_4 = "Externalizing",
+  lm_object = model_1
+)
+summary_df
+```
+
+```{r summary_model_1}
 summary(model_1)
 ```
 
-```{r}
+# Dot Whisker Plot of Coefficients for Model 1 (No Moderator)
+
+```{r dwplot1}
 dwplot(model_1,
        dot_args = list(color = "blue", size = 2.5),
        whisker_args = list(color="blue",size = 1)) %>%
@@ -200,7 +211,7 @@ dwplot(model_1,
 
 ## Model 1 Post-hoc and effects size (no moderator)
 
-```{r}
+```{r posthoc}
 # Eta squared
 eta_squared(model_1, partial = TRUE)
 
@@ -210,7 +221,7 @@ standardize_parameters(model_1)
 
 ### Model 2 observing effects of covariates with heat as a moderator
 
-```{r, include=FALSE}
+```{r model2, include=FALSE}
 model_2 <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi_addr1_national_prcnt*Days_Above_90 + 
      sdev_y_ders_total *Days_Above_90 +
      mh_y_upps_pers_sum*Days_Above_90 +
@@ -220,11 +231,11 @@ model_2 <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi_addr1_national_prcnt*Days_Abov
      mh_y_upps_nurg_sum*Days_Above_90 , data = abcd)
 ```
 
-```{r}
+```{r summary}
 summary(model_2)
 ```
 
-```{r}
+```{r dwplot2}
 interaction <- tidy(model_2) %>% filter(str_detect(term, ":"))
 dwplot(interaction,
        dot_args = list(color = "blue", size = 3),
@@ -248,7 +259,7 @@ dwplot(interaction,
 
 ## Model 2 Post-hoc and effects size for moderation effects of heat
 
-```{r}
+```{r posthoc2}
 # eta squared
 eta_squared(model_2, partial = TRUE)
 # standardized betas
@@ -257,7 +268,7 @@ standardize_parameters(model_2)
 
 ## Finally... The differences in $R^2$...
 
-```{r}
+```{r r2table}
 #R2
 r2model1 = summary(model_1)$r.squared
 r2model2 = summary(model_2)$r.squared
