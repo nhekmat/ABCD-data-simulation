@@ -22,9 +22,12 @@ library(dotwhisker)
 library(effectsize)
 library(pwr)
 # library(ggpubr)
-abcd= read.csv("data/simulated_data_with_family.csv")
-
 ```
+
+```{r}
+abcd= read.csv("data/simulated_data_with_family.csv")
+```
+
 
 ```{r kyle_custom_function1, include=FALSE}
 # kyle custom function 1
@@ -285,6 +288,23 @@ df = data.frame(
   AdjustedR2= c(r2adjmodel1, r2adjmodel2)
 )
 print(df)
+```
+
+```{r test}
+# Testing for each site
+# Parsing data
+# california <- abcd %>% filter(site_id==5)
+# head(california)
+# 
+# test <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi_addr1_national_prcnt + 
+#      sdev_y_ders_total +
+#      mh_y_upps_pers_sum+
+#      sex+
+#      Days_Above_90+
+#      le_l_coi_addr1_coi_total_national_score+
+#      le_l_svi_addr1_total_prcntile+
+#      mh_y_upps_nurg_sum, data = california)
+# summary(test)
 ```
 
 ## Conclusions...
