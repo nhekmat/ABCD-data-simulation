@@ -22,6 +22,7 @@ library(dotwhisker)
 library(effectsize)
 library(pwr)
 # library(ggpubr)
+library(apaTables)
 ```
 
 ```{r}
@@ -66,14 +67,13 @@ descriptives = function(df, vars, titles){
 }
 ```
 
-*Testing out kyle function*
 ```{r testing, include=FALSE}
-vars <- c("mh_p_cbcl__synd__ext_sum", 
-          "le_l_adi_addr1_national_prcnt", 
-          "sdev_y_ders_total") #First select your relevant covariates
-titles<- c("Externalizing", "ADI", "DERS") #Give covariates nicer titles
-desc_table <- descriptives(abcd, vars, titles) #Generates description fucntion details
-desc_table
+# vars <- c("mh_p_cbcl__synd__ext_sum", 
+#           "le_l_adi_addr1_national_prcnt", 
+#           "sdev_y_ders_total") #First select your relevant covariates
+# titles<- c("Externalizing", "ADI", "DERS") #Give covariates nicer titles
+# desc_table <- descriptives(abcd, vars, titles) #Generates description fucntion details
+# desc_table
 ```
 
 
@@ -283,28 +283,31 @@ r2adjmodel2 = summary(model_2)$adj.r.squared
 
 # data frame for comparison
 df = data.frame(
-  Models = c("Dot Whisker Plot of Coefficients for Model 2 (Moderator)"),
+  Models = c("Residual Squared for model 1", "Residual squared for model 2"),
   R2 = c(r2model1, r2model2),
   AdjustedR2= c(r2adjmodel1, r2adjmodel2)
 )
 print(df)
 ```
 
-```{r test}
+```{r testing lmer}
 # Testing for each site
 # Parsing data
 # california <- abcd %>% filter(site_id==5)
 # head(california)
 # 
-# test <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi_addr1_national_prcnt + 
+# lme_test <- lmer(mh_p_cbcl__synd__ext_sum ~ le_l_adi_addr1_national_prcnt + 
 #      sdev_y_ders_total +
 #      mh_y_upps_pers_sum+
 #      sex+
 #      Days_Above_90+
 #      le_l_coi_addr1_coi_total_national_score+
 #      le_l_svi_addr1_total_prcntile+
-#      mh_y_upps_nurg_sum, data = california)
-# summary(test)
+#      mh_y_upps_nurg_sum, 
+#      data = california)
+# 
+# summary(lme_test)
+
 ```
 
 ## Conclusions...
@@ -312,3 +315,7 @@ print(df)
 -   **The model has low adjusted** $R^2$, with the moderator it increases a bit (still pretty low).
 -   **With moderation effects, Social Vulnerability Index is the only significant covariate.**
 -   **It may be interesting to see how this changes state by state since this model looks at things nationally.**
+
+
+
+

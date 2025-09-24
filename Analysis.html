@@ -357,7 +357,7 @@ display: none;
 </div>
 
 
-<p><em>Testing out kyle function</em></p>
+<pre class="r"><code>abcd= read.csv(&quot;data/simulated_data_with_family.csv&quot;)</code></pre>
 <div id="model-1-observing-effects-of-covariates-without-heat-as-a-moderator" class="section level3">
 <h3>Model 1 observing effects of covariates without heat as a
 moderator</h3>
@@ -597,17 +597,30 @@ r2adjmodel2 = summary(model_2)$adj.r.squared
 
 # data frame for comparison
 df = data.frame(
-  Models = c(&quot;Dot Whisker Plot of Coefficients for Model 2 (Moderator)&quot;),
+  Models = c(&quot;Residual Squared for model 1&quot;, &quot;Residual squared for model 2&quot;),
   R2 = c(r2model1, r2model2),
   AdjustedR2= c(r2adjmodel1, r2adjmodel2)
 )
 print(df)</code></pre>
-<pre><code>##                                                     Models           R2
-## 1 Dot Whisker Plot of Coefficients for Model 2 (Moderator) 0.0007732181
-## 2 Dot Whisker Plot of Coefficients for Model 2 (Moderator) 0.0016221356
-##      AdjustedR2
-## 1 -2.688341e-05
-## 2  1.221688e-04</code></pre>
+<pre><code>##                         Models           R2    AdjustedR2
+## 1 Residual Squared for model 1 0.0007732181 -2.688341e-05
+## 2 Residual squared for model 2 0.0016221356  1.221688e-04</code></pre>
+<pre class="r"><code># Testing for each site
+# Parsing data
+# california &lt;- abcd %&gt;% filter(site_id==5)
+# head(california)
+# 
+# lme_test &lt;- lmer(mh_p_cbcl__synd__ext_sum ~ le_l_adi_addr1_national_prcnt + 
+#      sdev_y_ders_total +
+#      mh_y_upps_pers_sum+
+#      sex+
+#      Days_Above_90+
+#      le_l_coi_addr1_coi_total_national_score+
+#      le_l_svi_addr1_total_prcntile+
+#      mh_y_upps_nurg_sum, 
+#      data = california)
+# 
+# summary(lme_test)</code></pre>
 </div>
 <div id="conclusions" class="section level2">
 <h2>Conclusions…</h2>
