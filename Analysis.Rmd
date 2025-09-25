@@ -22,7 +22,7 @@ library(dotwhisker)
 library(effectsize)
 library(pwr)
 # library(ggpubr)
-library(apaTables)
+# library(apaTables)
 ```
 
 ```{r}
