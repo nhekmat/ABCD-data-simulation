@@ -22,7 +22,7 @@ library(dotwhisker)
 library(effectsize)
 library(pwr)
 # library(ggpubr)
-library(apaTables)
+# library(apaTables)
 ```
 
 ```{r}
@@ -185,7 +185,12 @@ summary_df
 ```
 
 ```{r summary_model_1}
-summary(model_1)
+results <- tidy(model_1)
+# Doing Benjamini–Hochberg (FDR)
+results$p.adjusted <- p.adjust(results$p.value, method = "BH")
+results %>% mutate(
+  p.value = round(p.value, 3),
+  p.adjusted = round(p.adjusted, 3))
 ```
 
 # Dot Whisker Plot of Coefficients for Model 1 (No Moderator)
@@ -236,7 +241,14 @@ model_2 <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi_addr1_national_prcnt*Days_Abov
 ```
 
 ```{r summary}
-summary(model_2)
+results2<- tidy(model_2)
+# Doing Benjamini–Hochberg (FDR)
+results2$p.adjusted <- p.adjust(results2$p.value, method = "BH")
+results2%>% mutate(
+  p.value = round(p.value, 3),
+  p.adjusted = round(p.adjusted, 3))
+
+
 ```
 
 ```{r dwplot2}
