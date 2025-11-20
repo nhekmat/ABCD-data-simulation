@@ -8,6 +8,7 @@ date: "2025-08-13"
 editor_options:
   chunk_output_type: console
 ---
+# Setup
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -21,15 +22,21 @@ library(dplyr)
 library(dotwhisker)
 library(effectsize)
 library(pwr)
+library(arrow)
 # library(ggpubr)
 # library(apaTables)
 ```
 
+## Read Data
 ```{r}
-abcd= read.csv("data/simulated_data_with_family.csv")
+# abcd= readRDS('C:/Users/kbaacke/ABCD_6.0/HeatProject_01/dataset.rds')
+abcd = read_parquet('C:/Users/kbaacke/ABCD_6.0/HeatProject_01/dataset.parquet')
+abcd = as.data.frame(abcd)
+abcd$site_char = as.character(abcd$ab_g_dyn__design_site)
+
 ```
 
-
+## Custom Functions
 ```{r kyle_custom_function1, include=FALSE}
 # kyle custom function 1
 descriptives = function(df, vars, titles){
@@ -157,7 +164,112 @@ lm_detail_dataframe = function(label_col_1, label_col_2, label_col_3, label_col_
   return(coef_df)
 }
 ```
+## Data Filtering
+```{r}
+# abcd_f = filter(abcd, session_id=='ses-01A')
+abcd_f = abcd[
+  # (abcd$session_id=='ses-01A') & 
+  (!is.na(abcd$sdev_y_ders_001)),
+  ]
+```
 
+# Estimate 90th percentiles per site
+
+```{r}
+percentile_list = list()
+temp_cols = grep("le_l_temp__addr1__temp_max__db", names(abcd), value=TRUE)
+
+for (site in unique(abcd[!is.na(abcd$ab_g_dyn__design_site),c('site_char')])){
+  site_df = abcd[as.character(abcd$ab_g_dyn__design_site)==site,]
+  temp_list = c()
+  for (col in temp_cols){
+    temp_list = c(temp_list, abcd[,c(col)])
+  }
+  percentile_90 = quantile(temp_list, .9, na.rm=TRUE)
+  percentile_list[[site]] = as.numeric(percentile_90)
+}
+
+percentile_list
+```
+
+```{r}
+# percentile_list = list()
+# ind = 1
+# abcd$site_char = as.character(abcd$ab_g_dyn__design_site)
+# for (site in pull(unique(abcd[!is.na(abcd$ab_g_dyn__design_site),]),site_char)){
+#   site_df = abcd[as.character(abcd$ab_g_dyn__design_site)==site,]
+#   temp_list = c(
+#     pull(site_df[!is.na(site_df$le_l_temp__addr1__temp_max__db0),],le_l_temp__addr1__temp_max__db0),
+#     pull(site_df[!is.na(site_df$le_l_temp__addr1__temp_max__db1),],le_l_temp__addr1__temp_max__db1),
+#     pull(site_df[!is.na(site_df$le_l_temp__addr1__temp_max__db2),],le_l_temp__addr1__temp_max__db2),
+#     pull(site_df[!is.na(site_df$le_l_temp__addr1__temp_max__db3),],le_l_temp__addr1__temp_max__db3),
+#     pull(site_df[!is.na(site_df$le_l_temp__addr1__temp_max__db4),],le_l_temp__addr1__temp_max__db4),
+#     pull(site_df[!is.na(site_df$le_l_temp__addr1__temp_max__db5),],le_l_temp__addr1__temp_max__db5),
+#     pull(site_df[!is.na(site_df$le_l_temp__addr1__temp_max__db6),],le_l_temp__addr1__temp_max__db6)
+#   )
+#   percentile_90 = quantile(temp_list, .9)
+#   percentile_list[[site]] = as.numeric(percentile_90)
+# 
+# }
+# 
+# percentile_list
+```
+
+
+
+ ## Variable Transformation
+```{r}
+cols = grep("sdev_y_ders_0", names(abcd_f), value=TRUE)
+new_cols = c()
+for (col in cols){
+  abcd_f[,c(paste0(col, "_INT"))] = as.numeric(as.character(abcd_f[,c(col)]))
+  new_cols = c(new_cols, paste0(col, "_INT"))
+}
+abcd_f$sdev_y_ders_total = rowSums(abcd_f[,new_cols])
+
+# abcd_f$sdev_y_ders_total = 
+#   as.integer(as.character(abcd_f$sdev_y_ders_001)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_002)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_003)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_004)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_005)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_006)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_007)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_008)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_009)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_010)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_011)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_012)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_013)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_014)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_015)) + 
+#   as.integer(as.character(abcd_f$sdev_y_ders_016)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_017)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_018)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_019)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_020)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_021)) + 
+#   as.integer(as.character(abcd_f$sdev_y_ders_022)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_023)) +
+#   as.integer(as.character(abcd_f$sdev_y_ders_024))
+
+psych::describe(abcd_f[!is.na(abcd_f$sdev_y_ders_total),c('sdev_y_ders_total')])
+
+
+# abcd_f$days_above_90 = c(
+#     le_l_temp__addr1__temp_max__db0 + 
+#     le_l_temp__addr1__temp_max__db1 +
+#     le_l_temp__addr1__temp_max__db2 +
+#     le_l_temp__addr1__temp_max__db3 + 
+#     le_l_temp__addr1__temp_max__db4 + 
+#     le_l_temp__addr1__temp_max__db5 +
+#     le_l_temp__addr1__temp_max__db6
+#   )
+
+```
+
+
+# Model Evaluation
 
 ### Model 1 observing effects of covariates without heat as a moderator
 
