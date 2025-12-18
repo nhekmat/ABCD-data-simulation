@@ -30,7 +30,8 @@ library(arrow)
 ## Read Data
 ```{r}
 # abcd= readRDS('C:/Users/kbaacke/ABCD_6.0/HeatProject_01/dataset.rds')
-abcd = read_parquet('C:/Users/kbaacke/ABCD_6.0/HeatProject_01/dataset.parquet')
+# abcd = read_parquet('C:/Users/kbaacke/ABCD_6.0/HeatProject_01/dataset.parquet')
+abcd = read.csv('C:/Users/kbaacke/ABCD_6.0/HeatProject_01/dataset.csv')
 abcd = as.data.frame(abcd)
 abcd$site_char = as.character(abcd$ab_g_dyn__design_site)
 
@@ -168,8 +169,8 @@ lm_detail_dataframe = function(label_col_1, label_col_2, label_col_3, label_col_
 ```{r}
 # abcd_f = filter(abcd, session_id=='ses-01A')
 abcd_f = abcd[
-  # (abcd$session_id=='ses-01A') & 
-  (!is.na(abcd$sdev_y_ders_001)),
+  # (abcd$session_id=='ses-01A') &
+  !is.na(abcd$sdev_y_ders_001),#,
   ]
 ```
 
@@ -183,7 +184,7 @@ for (site in unique(abcd[!is.na(abcd$ab_g_dyn__design_site),c('site_char')])){
   site_df = abcd[as.character(abcd$ab_g_dyn__design_site)==site,]
   temp_list = c()
   for (col in temp_cols){
-    temp_list = c(temp_list, abcd[,c(col)])
+    temp_list = c(temp_list, site_df[,c(col)])
   }
   percentile_90 = quantile(temp_list, .9, na.rm=TRUE)
   percentile_list[[site]] = as.numeric(percentile_90)
