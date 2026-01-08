@@ -239,6 +239,10 @@ for (v in target_vars){
 }
 abcd_f1
 ```
+```{r}
+abcd_f1$ab_g_stc__cohort_sex = as.factor(abcd_f1$ab_g_stc__cohort_sex)
+abcd_f2 = abcd_f1[abcd_f1$days_g_90_site>0,]
+```
 
 
 # Model Evaluation
@@ -274,6 +278,79 @@ car::vif(model_1)
 #      mh_y_upps_nurg_sum, data = abcd)
 ```
 
+```{r lm_model_1a}
+# Had to drop SVI due to high MC (>3)
+model_1a = lmer(
+  mh_p_cbcl__synd__ext_sum ~
+    days_g_90_site *
+    (le_l_adi__addr1__national_prcnt + mh_y_bisbas__bis_sum__v01 + 
+    ab_g_stc__cohort_sex +
+    mh_y_upps__pers_sum + mh_y_upps__nurg_sum +
+    le_l_coi__addr1__coi__total__national_score) +# le_l_svi__addr1__total_prcntile +
+    (1|site_char) + (1|ab_g_stc__design_id__fam),
+    data = abcd_f1[abcd_f1$days_g_90_site>0,]
+)
+summary(model_1a)
+anova(model_1a)
+coefs <- data.frame(coef(summary(model_1a)))
+# use normal distribution to approximate p-value
+coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
+coefs
+car::vif(model_1a)
+
+
+```
+```{r}
+
+# Had to drop SVI due to high MC (>3)
+model_1a_male = lmer(
+  mh_p_cbcl__synd__ext_sum ~
+    days_g_90_site *
+    # (le_l_adi__addr1__national_prcnt + mh_y_bisbas__bis_sum__v01 + 
+    # # ab_g_stc__cohort_sex +
+    # mh_y_upps__pers_sum + mh_y_upps__nurg_sum +
+    # le_l_coi__addr1__coi__total__national_score) +# le_l_svi__addr1__total_prcntile +
+    (1|site_char) + (1|ab_g_stc__design_id__fam),
+    data = abcd_f1[
+      (abcd_f1$days_g_90_site>0) & (abcd_f1$ab_g_stc__cohort_sex==1),
+    ]
+)
+summary(model_1a_male)
+anova(model_1a_male)
+coefs <- data.frame(coef(summary(model_1a_male)))
+# use normal distribution to approximate p-value
+coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
+coefs
+car::vif(model_1a_male)
+
+
+```
+
+```{r}
+# Had to drop SVI due to high MC (>3)
+model_1a_female = lmer(
+  mh_p_cbcl__synd__ext_sum ~
+    days_g_90_site *
+    # (le_l_adi__addr1__national_prcnt + mh_y_bisbas__bis_sum__v01 + 
+    # # ab_g_stc__cohort_sex +
+    # mh_y_upps__pers_sum + mh_y_upps__nurg_sum +
+    # le_l_coi__addr1__coi__total__national_score) +# le_l_svi__addr1__total_prcntile +
+    (1|site_char) + (1|ab_g_stc__design_id__fam),
+    data = abcd_f1[
+      (abcd_f1$days_g_90_site>0) & (abcd_f1$ab_g_stc__cohort_sex==2),
+    ]
+)
+summary(model_1a_female)
+anova(model_1a_female)
+coefs <- data.frame(coef(summary(model_1a_female)))
+# use normal distribution to approximate p-value
+coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
+coefs
+# car::vif(model_1a_female)
+```
+
+```
+
 ```{r}
 model_2 = lmer(
   mh_p_cbcl__synd__ext_sum ~
@@ -284,14 +361,23 @@ model_2 = lmer(
     (1|site_char) + (1|ab_g_stc__design_id__fam),
     data = abcd_f1
 )
-summary(model_1)
-anova(model_1)
-coefs <- data.frame(coef(summary(model_1)))
+summary(model_2)
+anova(model_2)
+coefs <- data.frame(coef(summary(model_2)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-car::vif(model_1)
+car::vif(model_2)
 ```
+
+
+
+
+
+
+
+
+
 
 
 
