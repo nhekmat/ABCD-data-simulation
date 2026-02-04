@@ -2,8 +2,8 @@
 title: "ABCD Simulations for Manuscript"
 author: "Kyle Baacke and Michael Nima Hekmat"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 date: "2025-08-13"
 editor_options:
   chunk_output_type: console
