@@ -75,6 +75,7 @@ descriptives = function(df, vars, titles){
 }
 ```
 
+
 ```{r testing, include=FALSE}
 # vars <- c("mh_p_cbcl__synd__ext_sum", 
 #           "le_l_adi_addr1_national_prcnt", 
@@ -190,7 +191,7 @@ for (site in unique(abcd[!is.na(abcd$ab_g_dyn__design_site),c('site_char')])){
   percentile_list[[site]] = as.numeric(percentile_90)
 }
 
-percentile_list
+# percentile_list
 ```
 
 ```{r}
@@ -204,14 +205,11 @@ percentile_90_consotrium = quantile(temp_list, .9, na.rm=TRUE)
 ```
 
 
-
-
  ## Variable Transformation
+ 
+  * This for days above site percentile 9th rank and then filters
+
 ```{r}
-#Need days above 90 degrees for each pp at each site
-#mutate new column which leads to filtering group by particpant and filter(columns >= 90) group by 
-
-
 for (d in c(0:6)){
   abcd_f[c(paste0("temp_90th_db",d))] = ifelse(abcd_f[c(paste0("le_l_temp__addr1__temp_max__db",d))]>percentile_90_consotrium, 1, 0)
   for (site in unique(abcd_f$site_char)){
@@ -237,7 +235,7 @@ abcd_f1 = abcd_f
 for (v in target_vars){
   abcd_f1 = abcd_f1[!(is.na(abcd_f1[,c(v)])),]
 }
-abcd_f1
+# abcd_f1
 ```
 ```{r}
 abcd_f1$ab_g_stc__cohort_sex = as.factor(abcd_f1$ab_g_stc__cohort_sex)
@@ -256,7 +254,7 @@ model_1 = lmer(
     le_l_adi__addr1__national_prcnt + mh_y_bisbas__bis_sum__v01 + 
     days_g_90_site + ab_g_stc__cohort_sex +
     mh_y_upps__pers_sum + mh_y_upps__nurg_sum +
-    le_l_coi__addr1__coi__total__national_score +# le_l_svi__addr1__total_prcntile +
+    le_l_coi__addr1__coi__total__national_score + #le_l_svi__addr1__total_prcntile +
     (1|site_char) + (1|ab_g_stc__design_id__fam),
     data = abcd_f1[abcd_f1$days_g_90_site>0,]
 )
@@ -267,7 +265,7 @@ coefs <- data.frame(coef(summary(model_1)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 car::vif(model_1)
-
+get_gof(model_1)
 # model_1 <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi__addr1__national_prcnt + 
 #      # sdev_y_ders_total +
 #      mh_y_upps_pers_sum+
@@ -277,6 +275,33 @@ car::vif(model_1)
 #      le_l_svi_addr1_total_prcntile+
 #      mh_y_upps_nurg_sum, data = abcd)
 ```
+
+# Moderating effect of heat for model 1
+
+```{r}
+# Had to drop SVI due to high MC (>3)
+model_1_moderating = lmer(
+  mh_p_cbcl__synd__ext_sum ~
+    le_l_adi__addr1__national_prcnt+ mh_y_bisbas__bis_sum__v01 + 
+    days_g_90_site*ab_g_stc__cohort_sex +
+    mh_y_upps__pers_sum + mh_y_upps__nurg_sum +
+    le_l_coi__addr1__coi__total__national_score +# le_l_svi__addr1__total_prcntile +
+    (1|site_char) + (1|ab_g_stc__design_id__fam),
+    data = abcd_f1[abcd_f1$days_g_90_site>0,]
+)
+summary(model_1_moderating)
+anova(model_1_moderating)
+coefs <- data.frame(coef(summary(model_1_moderating)))
+# use normal distribution to approximate p-value
+coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
+coefs
+car::vif(model_1_moderating)
+library(modelsummary)
+library(lmerTest)
+get_gof(model_1_moderating)
+```
+
+
 
 ```{r lm_model_1a}
 # Had to drop SVI due to high MC (>3)
@@ -321,7 +346,7 @@ coefs <- data.frame(coef(summary(model_1a_male)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-car::vif(model_1a_male)
+# car::vif(model_1a_male)
 
 
 ```
