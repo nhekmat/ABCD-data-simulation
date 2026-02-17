@@ -10,6 +10,8 @@ editor_options:
 ---
 # Setup
 
+# Setup
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(psych)
@@ -177,7 +179,10 @@ abcd_f = abcd[
 
 # Estimate 90th percentiles per site
 
+
+
 ```{r}
+#Site level 90th percentile
 percentile_list = list()
 temp_cols = grep("le_l_temp__addr1__temp_max__db", names(abcd), value=TRUE)
 
@@ -209,7 +214,9 @@ percentile_90_consotrium = quantile(temp_list, .9, na.rm=TRUE)
  
   * This for days above site percentile 9th rank and then filters
 
+
 ```{r}
+# Checking to see which participants were exposed above 90th percentile and assigning binary number (0 or 1) for both site level and consortium level
 for (d in c(0:6)){
   abcd_f[c(paste0("temp_90th_db",d))] = ifelse(abcd_f[c(paste0("le_l_temp__addr1__temp_max__db",d))]>percentile_90_consotrium, 1, 0)
   for (site in unique(abcd_f$site_char)){
@@ -217,28 +224,46 @@ for (d in c(0:6)){
   }
 }
 
+#Creating column for site level temp above 90th percentile
 site_temp_cols = grep("temp_90th_site_db", names(abcd_f), value=TRUE)
+#Creating column for consortium level temp above 90th percentile
 global_temp_cols = grep("temp_90th_db", names(abcd_f), value=TRUE)
 
+# Summing rows to see how many days exposed above 90th percentile (days exposed to extreme heat) for site
 abcd_f$days_g_90_site = rowSums(abcd_f[,site_temp_cols])
+
+# Summing rows to see how many days exposed above 90th percentile (days exposed to extreme heat) for consortium
 abcd_f$days_g_90_consotrium = rowSums(abcd_f[,global_temp_cols])
 
 ```
 
+# Establishing target variables
+
 ```{r}
+# Looking for participants with these variables
 target_vars = c(
   'mh_p_cbcl__synd__ext_sum', 'le_l_adi__addr1__national_prcnt',
   'days_g_90_consotrium', 'mh_y_bisbas__bis_sum__v01', 'mh_y_upps__pers_sum', 'ab_g_stc__cohort_sex', 
   'le_l_coi__addr1__coi__total__national_score', 'le_l_svi__addr1__total_prcntile', 'mh_y_upps__nurg_sum'
   )
+# Rewrite dataset
 abcd_f1 = abcd_f
+
+# Remove rows with NA values
 for (v in target_vars){
   abcd_f1 = abcd_f1[!(is.na(abcd_f1[,c(v)])),]
 }
+
 # abcd_f1
 ```
+
+# Data manipulation for sex and floor effect
+
 ```{r}
+# Setting sex as categorical variable
 abcd_f1$ab_g_stc__cohort_sex = as.factor(abcd_f1$ab_g_stc__cohort_sex)
+
+# Removing floor effect, participants must be exposed to extreme heat
 abcd_f2 = abcd_f1[abcd_f1$days_g_90_site>0,]
 ```
 
@@ -302,6 +327,7 @@ get_gof(model_1_moderating)
 ```
 
 
+### Model 1 observing effects of covariates with heat as a moderator
 
 ```{r lm_model_1a}
 # Had to drop SVI due to high MC (>3)
@@ -322,9 +348,10 @@ coefs <- data.frame(coef(summary(model_1a)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 car::vif(model_1a)
-
-
 ```
+
+### Model 1 observing effects of covariates with heat as a moderator for males
+
 ```{r}
 
 # Had to drop SVI due to high MC (>3)
@@ -351,6 +378,9 @@ coefs
 
 ```
 
+
+### Model 1 observing effects of covariates with heat as a moderator for females
+
 ```{r}
 # Had to drop SVI due to high MC (>3)
 model_1a_female = lmer(
@@ -374,7 +404,7 @@ coefs
 # car::vif(model_1a_female)
 ```
 
-```
+
 
 ```{r}
 model_2 = lmer(
@@ -395,16 +425,7 @@ coefs
 car::vif(model_2)
 ```
 
-
-
-
-
-
-
-
-
-
-
+# below is old code I believe
 
 ```{r lm_summary_dataframe, include=FALSE}
 summary_df <- lm_summary_dataframe(
