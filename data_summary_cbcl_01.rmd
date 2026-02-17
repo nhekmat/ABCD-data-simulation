@@ -1,0 +1,61 @@
+---
+title: "DataSummaryCBCL"
+author: "Kyle"
+date: "2026-01-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Read Data
+```{r}
+abcd = read.csv('C:/Users/kbaacke/ABCD_6.0/HeatProject_01/dataset.csv')
+abcd = as.data.frame(abcd)
+
+```
+
+# Make table of frequency by sex of all cbcl vars
+```{r}
+vars_mh_p_cbcl__synd__ext <- c(
+  "mh_p_cbcl__rule_001",
+  "mh_p_cbcl__rule__cond_010",
+  "mh_p_cbcl__rule_006",
+  "mh_p_cbcl__rule__cond_011",
+  "mh_p_cbcl__rule__cond_001",
+  "mh_p_cbcl__rule__cond_002",
+  "mh_p_cbcl__rule__cond_003",
+  "mh_p_cbcl__rule__cond_004",
+  "mh_p_cbcl__rule_002",
+  "mh_p_cbcl__rule__cond_005",
+  "mh_p_cbcl__rule__cond_006",
+  "mh_p_cbcl__rule_003",
+  "mh_p_cbcl__rule__cond_007",
+  "mh_p_cbcl__rule__cond_008",
+  "mh_p_cbcl__rule__cond_009",
+  "mh_p_cbcl__rule_004",
+  "mh_p_cbcl__rule_005",
+  "mh_p_cbcl__aggr__opp_001",
+  "mh_p_cbcl__aggr__adhd_001",
+  "mh_p_cbcl__aggr__cond_001",
+  "mh_p_cbcl__aggr_001",
+  "mh_p_cbcl__aggr_002",
+  "mh_p_cbcl__aggr__cond_002",
+  "mh_p_cbcl__aggr__opp_002",
+  "mh_p_cbcl__aggr__opp_003",
+  "mh_p_cbcl__aggr__cond_003",
+  "mh_p_cbcl__aggr__cond_004",
+  "mh_p_cbcl__aggr_003",
+  "mh_p_cbcl__aggr__opp_004",
+  "mh_p_cbcl__aggr_004",
+  "mh_p_cbcl__aggr_005",
+  "mh_p_cbcl__aggr_006",
+  "mh_p_cbcl__aggr_007",
+  "mh_p_cbcl__aggr__opp_005",
+  "mh_p_cbcl__aggr__cond_005"
+)
+
+
+```
+
