@@ -119,6 +119,7 @@ lm_summary_dataframe = function(label_col_1, label_col_2, label_col_3, label_col
   return(res_data_frame)
 }
 
+
 lm_detail_dataframe = function(label_col_1, label_col_2, label_col_3, label_col_4, lm_object){
   # subject_subset, variable_subset, variable_name, Estimate, Std_Error, t_value, p_value, VIF, beta, partial_eta_squared
   coef_df = as.data.frame(summary(lm_object)$coefficients)
