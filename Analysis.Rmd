@@ -291,7 +291,7 @@ coefs <- data.frame(coef(summary(model_1)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 car::vif(model_1)
-get_gof(model_1)
+modelsummary::get_gof(model_1)
 # model_1 <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi__addr1__national_prcnt + 
 #      # sdev_y_ders_total +
 #      mh_y_upps_pers_sum+
@@ -429,132 +429,132 @@ car::vif(model_2)
 # below is old code I believe
 
 ```{r lm_summary_dataframe, include=FALSE}
-summary_df <- lm_summary_dataframe(
-  label_col_1 = "Model_1",
-  label_col_2 = "NoHeatModerator",
-  label_col_3 = "MainEffects",
-  label_col_4 = "Externalizing",
-  lm_object = model_1
-)
-summary_df
+# summary_df <- lm_summary_dataframe(
+#   label_col_1 = "Model_1",
+#   label_col_2 = "NoHeatModerator",
+#   label_col_3 = "MainEffects",
+#   label_col_4 = "Externalizing",
+#   lm_object = model_1
+# )
+# summary_df
 ```
 
 ```{r summary_model_1}
-results <- tidy(model_1)
-# Doing Benjamini–Hochberg (FDR)
-results$p.adjusted <- p.adjust(results$p.value, method = "BH")
-results %>% mutate(
-  p.value = round(p.value, 3),
-  p.adjusted = round(p.adjusted, 3))
+# results <- tidy(model_1)
+# # Doing Benjamini–Hochberg (FDR)
+# results$p.adjusted <- p.adjust(results$p.value, method = "BH")
+# results %>% mutate(
+#   p.value = round(p.value, 3),
+#   p.adjusted = round(p.adjusted, 3))
 ```
 
 # Dot Whisker Plot of Coefficients for Model 1 (No Moderator)
 
 ```{r dwplot1}
-dwplot(model_1,
-       dot_args = list(color = "blue", size = 2.5),
-       whisker_args = list(color="blue",size = 1)) %>%
-  relabel_predictors(c(
-    "(Intercept)" = "Intercept",
-    "le_l_adi_addr1_national_prcnt" = "Area Deprivation Index (%)",
-    "sdev_y_ders_total" = "DERS Total Score", 
-    "mh_y_upps_pers_sum" = "UPPS-P Perseverance",
-    "sex" = "Sex",
-    "Days_Above_90" = "Days Above 90°F",
-    "le_l_coi_addr1_coi_total_national_score" = "COI Total Score",
-    "le_l_svi_addr1_total_prcntile" = "SVI Percentile",
-    "mh_y_upps_nurg_sum" = "UPPS-P Negative Urgency"
-  )) +
-  geom_vline(xintercept = 0, colour = "red", linetype = 2, linewidth = 1) +
-  ggtitle(str_wrap("Dot Whisker Plot of Coefficients for Model 1 (No Moderator)", width =35)) +
-  xlab("Coefficient Estimates") +
-  ylab("Covariates") +
-  theme_bw()+
-  theme(plot.title = element_text(hjust = 0.5))
+# dwplot(model_1,
+#        dot_args = list(color = "blue", size = 2.5),
+#        whisker_args = list(color="blue",size = 1)) %>%
+#   relabel_predictors(c(
+#     "(Intercept)" = "Intercept",
+#     "le_l_adi_addr1_national_prcnt" = "Area Deprivation Index (%)",
+#     "sdev_y_ders_total" = "DERS Total Score", 
+#     "mh_y_upps_pers_sum" = "UPPS-P Perseverance",
+#     "sex" = "Sex",
+#     "Days_Above_90" = "Days Above 90°F",
+#     "le_l_coi_addr1_coi_total_national_score" = "COI Total Score",
+#     "le_l_svi_addr1_total_prcntile" = "SVI Percentile",
+#     "mh_y_upps_nurg_sum" = "UPPS-P Negative Urgency"
+#   )) +
+#   geom_vline(xintercept = 0, colour = "red", linetype = 2, linewidth = 1) +
+#   ggtitle(str_wrap("Dot Whisker Plot of Coefficients for Model 1 (No Moderator)", width =35)) +
+#   xlab("Coefficient Estimates") +
+#   ylab("Covariates") +
+#   theme_bw()+
+#   theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ## Model 1 Post-hoc and effects size (no moderator)
 
 ```{r posthoc}
 # Eta squared
-eta_squared(model_1, partial = TRUE)
-
-# Standardized betas
-standardize_parameters(model_1)
+# eta_squared(model_1, partial = TRUE)
+# 
+# # Standardized betas
+# standardize_parameters(model_1)
 ```
 
 ### Model 2 observing effects of covariates with heat as a moderator
 
 ```{r model2, include=FALSE}
-model_2 <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi_addr1_national_prcnt*Days_Above_90 + 
-     sdev_y_ders_total *Days_Above_90 +
-     mh_y_upps_pers_sum*Days_Above_90 +
-     sex*Days_Above_90+
-     le_l_coi_addr1_coi_total_national_score*Days_Above_90 +
-     le_l_svi_addr1_total_prcntile*Days_Above_90 +
-     mh_y_upps_nurg_sum*Days_Above_90 , data = abcd)
+# model_2 <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi_addr1_national_prcnt*Days_Above_90 + 
+#      sdev_y_ders_total *Days_Above_90 +
+#      mh_y_upps_pers_sum*Days_Above_90 +
+#      sex*Days_Above_90+
+#      le_l_coi_addr1_coi_total_national_score*Days_Above_90 +
+#      le_l_svi_addr1_total_prcntile*Days_Above_90 +
+#      mh_y_upps_nurg_sum*Days_Above_90 , data = abcd)
 ```
 
 ```{r summary}
-results2<- tidy(model_2)
-# Doing Benjamini–Hochberg (FDR)
-results2$p.adjusted <- p.adjust(results2$p.value, method = "BH")
-results2%>% mutate(
-  p.value = round(p.value, 3),
-  p.adjusted = round(p.adjusted, 3))
-
+# results2<- tidy(model_2)
+# # Doing Benjamini–Hochberg (FDR)
+# results2$p.adjusted <- p.adjust(results2$p.value, method = "BH")
+# results2%>% mutate(
+#   p.value = round(p.value, 3),
+#   p.adjusted = round(p.adjusted, 3))
+# 
 
 ```
 
 ```{r dwplot2}
-interaction <- tidy(model_2) %>% filter(str_detect(term, ":"))
-dwplot(interaction,
-       dot_args = list(color = "blue", size = 3),
-       whisker_args = list(color = "blue", size = 1.5)) %>%
-  relabel_predictors(c(
-    "le_l_adi_addr1_national_prcnt:Days_Above_90" = "ADI × Heat",
-    "Days_Above_90:sdev_y_ders_total" = "DERS × Heat", 
-    "Days_Above_90:mh_y_upps_pers_sum" = "Perseverance × Heat",
-    "Days_Above_90:sex" = "Sex × Heat",
-    "Days_Above_90:le_l_coi_addr1_coi_total_national_score" = "COI × Heat",
-    "Days_Above_90:le_l_svi_addr1_total_prcntile" = "SVI × Heat",
-    "Days_Above_90:mh_y_upps_nurg_sum" = "Negative Urgency × Heat"
-  )) +
-  geom_vline(xintercept = 0, colour = "red", linetype = 2, linewidth = 1) +
-  ggtitle(str_wrap("Dot Whisker Plot of Coefficients for Model 2 (With Moderator)", width = 35)) +
-  xlab("Coefficient Estimates") +
-  ylab("Covariates") +
-  theme_bw() +
-  theme(plot.title = element_text(hjust = 0.5))
+# interaction <- tidy(model_2) %>% filter(str_detect(term, ":"))
+# dwplot(interaction,
+#        dot_args = list(color = "blue", size = 3),
+#        whisker_args = list(color = "blue", size = 1.5)) %>%
+#   relabel_predictors(c(
+#     "le_l_adi_addr1_national_prcnt:Days_Above_90" = "ADI × Heat",
+#     "Days_Above_90:sdev_y_ders_total" = "DERS × Heat", 
+#     "Days_Above_90:mh_y_upps_pers_sum" = "Perseverance × Heat",
+#     "Days_Above_90:sex" = "Sex × Heat",
+#     "Days_Above_90:le_l_coi_addr1_coi_total_national_score" = "COI × Heat",
+#     "Days_Above_90:le_l_svi_addr1_total_prcntile" = "SVI × Heat",
+#     "Days_Above_90:mh_y_upps_nurg_sum" = "Negative Urgency × Heat"
+#   )) +
+#   geom_vline(xintercept = 0, colour = "red", linetype = 2, linewidth = 1) +
+#   ggtitle(str_wrap("Dot Whisker Plot of Coefficients for Model 2 (With Moderator)", width = 35)) +
+#   xlab("Coefficient Estimates") +
+#   ylab("Covariates") +
+#   theme_bw() +
+#   theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ## Model 2 Post-hoc and effects size for moderation effects of heat
 
 ```{r posthoc2}
 # eta squared
-eta_squared(model_2, partial = TRUE)
-# standardized betas
-standardize_parameters(model_2) 
+# eta_squared(model_2, partial = TRUE)
+# # standardized betas
+# standardize_parameters(model_2) 
 ```
 
 ## Finally... The differences in $R^2$...
 
 ```{r r2table}
-#R2
-r2model1 = summary(model_1)$r.squared
-r2model2 = summary(model_2)$r.squared
-
-# adj R2
-r2adjmodel1 = summary(model_1)$adj.r.squared
-r2adjmodel2 = summary(model_2)$adj.r.squared
-
-# data frame for comparison
-df = data.frame(
-  Models = c("Residual Squared for model 1", "Residual squared for model 2"),
-  R2 = c(r2model1, r2model2),
-  AdjustedR2= c(r2adjmodel1, r2adjmodel2)
-)
-print(df)
+# #R2
+# r2model1 = summary(model_1)$r.squared
+# r2model2 = summary(model_2)$r.squared
+# 
+# # adj R2
+# r2adjmodel1 = summary(model_1)$adj.r.squared
+# r2adjmodel2 = summary(model_2)$adj.r.squared
+# 
+# # data frame for comparison
+# df = data.frame(
+#   Models = c("Residual Squared for model 1", "Residual squared for model 2"),
+#   R2 = c(r2model1, r2model2),
+#   AdjustedR2= c(r2adjmodel1, r2adjmodel2)
+# )
+# print(df)
 ```
 
 ```{r testing lmer}
