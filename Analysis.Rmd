@@ -8,6 +8,7 @@ date: "2025-08-13"
 editor_options:
   chunk_output_type: inline
 ---
+# Setup
 
 # Setup
 
@@ -28,8 +29,7 @@ library(arrow)
 # library(apaTables)
 ```
 
-## Read Dataset
-
+## Read Data
 ```{r}
 # abcd= readRDS('C:/Users/kbaacke/ABCD_6.0/HeatProject_01/dataset.rds')
 # abcd = read_parquet('C:/Users/kbaacke/ABCD_6.0/HeatProject_01/dataset.parquet')
@@ -40,7 +40,6 @@ abcd$site_char = as.character(abcd$ab_g_dyn__design_site)
 ```
 
 ## Custom Functions
-
 ```{r kyle_custom_function1, include=FALSE}
 # kyle custom function 1
 descriptives = function(df, vars, titles){
@@ -77,6 +76,7 @@ descriptives = function(df, vars, titles){
   return(out)
 }
 ```
+
 
 ```{r testing, include=FALSE}
 # vars <- c("mh_p_cbcl__synd__ext_sum", 
@@ -177,7 +177,9 @@ abcd_f = abcd[
   ]
 ```
 
-# Estimate 90th percentiles
+# Estimate 90th percentiles per site
+
+
 
 ```{r}
 #Site level 90th percentile
@@ -194,11 +196,11 @@ for (site in unique(abcd[!is.na(abcd$ab_g_dyn__design_site),c('site_char')])){
   percentile_list[[site]] = as.numeric(percentile_90)
 }
 
-percentile_list
+# percentile_list
 ```
 
 ```{r}
-#Finding consortium level 90th percentile
+#consotrium level 90th percentile
 temp_list = c()
 for (col in temp_cols){
   temp_list = c(temp_list, abcd_f[,c(col)])
@@ -206,6 +208,12 @@ for (col in temp_cols){
 percentile_90_consotrium = quantile(temp_list, .9, na.rm=TRUE)
 
 ```
+
+
+ ## Variable Transformation
+ 
+  * This for days above site percentile 9th rank and then filters
+
 
 ```{r}
 # Checking to see which participants were exposed above 90th percentile and assigning binary number (0 or 1) for both site level and consortium level
@@ -271,7 +279,7 @@ model_1 = lmer(
     le_l_adi__addr1__national_prcnt + mh_y_bisbas__bis_sum__v01 + 
     days_g_90_site + ab_g_stc__cohort_sex +
     mh_y_upps__pers_sum + mh_y_upps__nurg_sum +
-    le_l_coi__addr1__coi__total__national_score +# le_l_svi__addr1__total_prcntile +
+    le_l_coi__addr1__coi__total__national_score + #le_l_svi__addr1__total_prcntile +
     (1|site_char) + (1|ab_g_stc__design_id__fam),
     data = abcd_f1[abcd_f1$days_g_90_site>0,]
 )
@@ -282,7 +290,7 @@ coefs <- data.frame(coef(summary(model_1)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 car::vif(model_1)
-
+get_gof(model_1)
 # model_1 <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi__addr1__national_prcnt + 
 #      # sdev_y_ders_total +
 #      mh_y_upps_pers_sum+
@@ -292,6 +300,32 @@ car::vif(model_1)
 #      le_l_svi_addr1_total_prcntile+
 #      mh_y_upps_nurg_sum, data = abcd)
 ```
+
+# Moderating effect of heat for model 1
+
+```{r}
+# Had to drop SVI due to high MC (>3)
+model_1_moderating = lmer(
+  mh_p_cbcl__synd__ext_sum ~
+    le_l_adi__addr1__national_prcnt+ mh_y_bisbas__bis_sum__v01 + 
+    days_g_90_site*ab_g_stc__cohort_sex +
+    mh_y_upps__pers_sum + mh_y_upps__nurg_sum +
+    le_l_coi__addr1__coi__total__national_score +# le_l_svi__addr1__total_prcntile +
+    (1|site_char) + (1|ab_g_stc__design_id__fam),
+    data = abcd_f1[abcd_f1$days_g_90_site>0,]
+)
+summary(model_1_moderating)
+anova(model_1_moderating)
+coefs <- data.frame(coef(summary(model_1_moderating)))
+# use normal distribution to approximate p-value
+coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
+coefs
+car::vif(model_1_moderating)
+library(modelsummary)
+library(lmerTest)
+get_gof(model_1_moderating)
+```
+
 
 ### Model 1 observing effects of covariates with heat as a moderator
 
@@ -339,7 +373,7 @@ coefs <- data.frame(coef(summary(model_1a_male)))
 # use normal distribution to approximate p-value
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
-car::vif(model_1a_male)
+# car::vif(model_1a_male)
 
 
 ```
@@ -369,9 +403,6 @@ coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 # car::vif(model_1a_female)
 ```
-
-
-
 
 
 
