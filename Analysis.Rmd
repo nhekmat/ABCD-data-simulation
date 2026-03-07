@@ -293,9 +293,6 @@ coefs <- data.frame(coef(summary(model_1)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 car::vif(model_1)
-<<<<<<< Updated upstream
-get_gof(model_1)
-=======
 modelsummary::get_gof(model_1)
 
 # Interpretation of values
@@ -303,7 +300,6 @@ modelsummary::get_gof(model_1)
 
 # Multicolinearity was measured using Variance Inflation Factor (VIF). Covariates with VIF scores greater than 3 were excluded from the model. (Unsure whether I should say that we dropped SVI or if it even matters)
 
->>>>>>> Stashed changes
 # model_1 <- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi__addr1__national_prcnt + 
 #      # sdev_y_ders_total +
 #      mh_y_upps_pers_sum+
@@ -314,7 +310,7 @@ modelsummary::get_gof(model_1)
 #      mh_y_upps_nurg_sum, data = abcd)
 ```
 
-# Moderating effect of heat for model 1
+# Moderating effect of heat for model 1 only for sex
 
 ```{r}
 # Had to drop SVI due to high MC (>3)
@@ -337,6 +333,13 @@ car::vif(model_1_moderating)
 library(modelsummary)
 library(lmerTest)
 get_gof(model_1_moderating)
+
+
+# Interpretation of values
+# The a linear mixed effects model analyzing the relationship between externalizing symptoms and included the moderating effect of extreme heat on cohort sex. The model included area deprivation national score, behavioral inhibition score, days exposed to extreme heat, UPPS perserverance score, UPPS negative urgency score, and child oppertunity index national score. 
+# UPPS subscales of Negative Urgency (beta = 0.31, SE = 0.03, t = 9.32, p < 0.001) and Perseverance (beta = 0.17, SE = 0.04, t = 4.56, p < 0.001) was positively associated with externalizing behaviors. Sex was positively associated with externalizing behaviors (beta = -1.00, SE =  0.17, t = -5.71, p < 0.001). Childhood opportunity index scores (beta =-0.01, SE = 0.01, t = -2.72, p = .006). Area deprivation index, extreme heat exposure, and BIS score were not significantly associated with externalizing behaviors.
+
+# Multicolinearity was measured using Variance Inflation Factor (VIF). Covariates with VIF scores greater than 3 were excluded from the model. (Unsure whether I should say that we dropped SVI or if it even matters)
 ```
 
 
