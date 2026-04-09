@@ -434,7 +434,8 @@ abcd_f$days_g_90_consotrium = rowSums(abcd_f[,global_temp_cols])</code></pre>
 target_vars = c(
   &#39;mh_p_cbcl__synd__ext_sum&#39;, &#39;le_l_adi__addr1__national_prcnt&#39;,
   &#39;days_g_90_consotrium&#39;, &#39;mh_y_bisbas__bis_sum__v01&#39;, &#39;mh_y_upps__pers_sum&#39;, &#39;ab_g_stc__cohort_sex&#39;, 
-  &#39;le_l_coi__addr1__coi__total__national_score&#39;, &#39;le_l_svi__addr1__total_prcntile&#39;, &#39;mh_y_upps__nurg_sum&#39;
+  &#39;le_l_coi__addr1__coi__total__national_score&#39;, &#39;le_l_svi__addr1__total_prcntile&#39;, &#39;mh_y_upps__nurg_sum&#39;,
+  &#39;days_g_90_site&#39;
   )
 # Rewrite dataset
 abcd_f1 = abcd_f
@@ -560,7 +561,12 @@ coefs</code></pre>
 <pre class="r"><code>modelsummary::get_gof(model_1)</code></pre>
 <pre><code>##        aic      bic r2.conditional r2.marginal       icc     rmse nobs
 ## 1 25874.92 25944.56      0.5055041  0.05246563 0.4781235 3.008787 4148</code></pre>
-<pre class="r"><code># model_1 &lt;- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi__addr1__national_prcnt + 
+<pre class="r"><code># Interpretation of values
+# The a linear mixed effects model analyzing the relationship between externalizing symptoms and area deprivation national score, behavioral inhibition score, days exposed to extreme heat, cohort sex, UPPS perserverance score, UPPS negative urgency score, and child oppertunity index national score, UPPS subscales of Negative Urgency (beta = 0.31, SE = 0.03, t = 9.32, p &lt; 0.001) and Perseverance (beta = 0.17, SE = 0.04, t = 4.56, p &lt; 0.001) was positively associated with externalizing behaviors. Sex was positively associated with externalizing behaviors (beta = -1.00, SE =  0.17, t = -5.71, p &lt; 0.001). Childhood opportunity index scores (beta =-0.01, SE = 0.01, t = -2.72, p = .006). Area deprivation index, extreme heat exposure, and BIS score were not significantly associated with externalizing behaviors.
+
+# Multicolinearity was measured using Variance Inflation Factor (VIF). Covariates with VIF scores greater than 3 were excluded from the model. (Unsure whether I should say that we dropped SVI or if it even matters)
+
+# model_1 &lt;- lm(mh_p_cbcl__synd__ext_sum ~ le_l_adi__addr1__national_prcnt + 
 #      # sdev_y_ders_total +
 #      mh_y_upps_pers_sum+
 #      sex+
@@ -570,8 +576,8 @@ coefs</code></pre>
 #      mh_y_upps_nurg_sum, data = abcd)</code></pre>
 </div>
 </div>
-<div id="moderating-effect-of-heat-for-model-1" class="section level1">
-<h1>Moderating effect of heat for model 1</h1>
+<div id="moderating-effect-of-heat-for-model-1-only-for-sex" class="section level1">
+<h1>Moderating effect of heat for model 1 only for sex</h1>
 <pre class="r"><code># Had to drop SVI due to high MC (&gt;3)
 model_1_moderating = lmer(
   mh_p_cbcl__synd__ext_sum ~
@@ -706,6 +712,13 @@ coefs</code></pre>
 <pre class="r"><code>get_gof(model_1_moderating)</code></pre>
 <pre><code>##       aic      bic r2.conditional r2.marginal       icc     rmse nobs
 ## 1 25870.4 25946.37      0.5076962  0.05457018 0.4792804 2.998226 4148</code></pre>
+<pre class="r"><code># Interpretation of values
+# The a linear mixed effects model analyzing the relationship between externalizing symptoms and included the moderating effect of extreme heat on cohort sex. The model included area deprivation national score, behavioral inhibition score, days exposed to extreme heat, UPPS perserverance score, UPPS negative urgency score, and child oppertunity index national score.
+# Analysis revealed a significant moderating effect of extreme heat on cohort sex (beta =  -0.24, SE = 0.005, t = -2.75, p = 0.002). 
+# The main effects of the model revealed that UPPS subscales of Negative Urgency (beta = 0.31, SE = 0.03, t = 9.38, p &lt; 0.001) and Perseverance (beta = 0.17, SE = 0.04, t = 4.54, p &lt; 0.001), child opportunity index (beta = -0.01, SE = 0.005, t = - 2.75, p = 0.006) was positively associated with externalizing behaviors. 
+
+
+# Unsure of whether it&#39;s relevant to report on multicolinearity here</code></pre>
 <div id="model-1-observing-effects-of-covariates-with-heat-as-a-moderator" class="section level3">
 <h3>Model 1 observing effects of covariates with heat as a
 moderator</h3>
@@ -977,6 +990,24 @@ coefs</code></pre>
 ##                                                  13.019165 
 ## days_g_90_site:le_l_coi__addr1__coi__total__national_score 
 ##                                                  15.489285</code></pre>
+<pre class="r"><code># Analysis revealed a significant moderating effect of extreme heat on cohort sex and externalizing behaviors (beta =  -0.25, SE = 0.08, t = -3.19, p = 0.001).
+
+#Checking to see if relationship gets stronger the more days exposed to extreme heat for sex
+slopes1a = emtrends(
+  model_1a,
+  specs = ~ab_g_stc__cohort_sex,
+  var = &quot;days_g_90_site&quot;,
+  # at = list(ab_g_stc__cohort_sex = c(1,2,3,4,5)),
+  pbkrtest.limit = 4148,
+  adjust = &quot;fdr&quot;)
+print(slopes1a)</code></pre>
+<pre><code>##  ab_g_stc__cohort_sex days_g_90_site.trend     SE   df  lower.CL upper.CL
+##  1                                   0.130 0.0578 2677  0.000224   0.2593
+##  2                                  -0.118 0.0592 2646 -0.250779   0.0146
+## 
+## Degrees-of-freedom method: kenward-roger 
+## Confidence level used: 0.95 
+## Conf-level adjustment: bonferroni method for 2 estimates</code></pre>
 </div>
 <div id="model-1-observing-effects-of-covariates-with-heat-as-a-moderator-for-males" class="section level3">
 <h3>Model 1 observing effects of covariates with heat as a moderator for
@@ -984,11 +1015,11 @@ males</h3>
 <pre class="r"><code># Had to drop SVI due to high MC (&gt;3)
 model_1a_male = lmer(
   mh_p_cbcl__synd__ext_sum ~
-    days_g_90_site *
-    # (le_l_adi__addr1__national_prcnt + mh_y_bisbas__bis_sum__v01 + 
+    days_g_90_site +
+    (le_l_adi__addr1__national_prcnt + mh_y_bisbas__bis_sum__v01 +
     # # ab_g_stc__cohort_sex +
-    # mh_y_upps__pers_sum + mh_y_upps__nurg_sum +
-    # le_l_coi__addr1__coi__total__national_score) +# le_l_svi__addr1__total_prcntile +
+    mh_y_upps__pers_sum + mh_y_upps__nurg_sum +
+    le_l_coi__addr1__coi__total__national_score) +# le_l_svi__addr1__total_prcntile +
     (1|site_char) + (1|ab_g_stc__design_id__fam),
     data = abcd_f1[
       (abcd_f1$days_g_90_site&gt;0) &amp; (abcd_f1$ab_g_stc__cohort_sex==1),
@@ -997,49 +1028,125 @@ model_1a_male = lmer(
 summary(model_1a_male)</code></pre>
 <pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
 ## lmerModLmerTest]
-## Formula: mh_p_cbcl__synd__ext_sum ~ days_g_90_site * (1 | site_char) +  
+## Formula: 
+## mh_p_cbcl__synd__ext_sum ~ days_g_90_site + (le_l_adi__addr1__national_prcnt +  
+##     mh_y_bisbas__bis_sum__v01 + mh_y_upps__pers_sum + mh_y_upps__nurg_sum +  
+##     le_l_coi__addr1__coi__total__national_score) + (1 | site_char) +  
 ##     (1 | ab_g_stc__design_id__fam)
 ##    Data: 
 ## abcd_f1[(abcd_f1$days_g_90_site &gt; 0) &amp; (abcd_f1$ab_g_stc__cohort_sex ==  
 ##     1), ]
 ## 
-## REML criterion at convergence: 13786.6
+## REML criterion at convergence: 13708.6
 ## 
 ## Scaled residuals: 
 ##     Min      1Q  Median      3Q     Max 
-## -2.1688 -0.4516 -0.2183  0.2583  4.8048 
+## -2.0746 -0.4594 -0.2009  0.2577  4.8006 
 ## 
 ## Random effects:
 ##  Groups                   Name        Variance Std.Dev.
-##  ab_g_stc__design_id__fam (Intercept) 19.9856  4.4705  
-##  site_char                (Intercept)  0.5802  0.7617  
-##  Residual                             17.1971  4.1469  
+##  ab_g_stc__design_id__fam (Intercept) 17.9829  4.2406  
+##  site_char                (Intercept)  0.3662  0.6052  
+##  Residual                             17.3937  4.1706  
 ## Number of obs: 2144, groups:  ab_g_stc__design_id__fam, 1936; site_char, 22
 ## 
 ## Fixed effects:
-##                 Estimate Std. Error        df t value Pr(&gt;|t|)    
-## (Intercept)      4.39603    0.32938  78.05829  13.346   &lt;2e-16 ***
-## days_g_90_site   0.15830    0.06591 919.88994   2.402   0.0165 *  
+##                                               Estimate Std. Error         df
+## (Intercept)                                  5.766e-01  1.003e+00  2.513e+02
+## days_g_90_site                               1.320e-01  6.369e-02  7.502e+02
+## le_l_adi__addr1__national_prcnt              8.691e-03  8.992e-03  9.734e+01
+## mh_y_bisbas__bis_sum__v01                   -3.246e-02  4.495e-02  1.951e+03
+## mh_y_upps__pers_sum                          1.962e-01  5.623e-02  2.049e+03
+## mh_y_upps__nurg_sum                          3.782e-01  4.984e-02  2.003e+03
+## le_l_coi__addr1__coi__total__national_score -1.776e-02  7.568e-03  1.769e+02
+##                                             t value Pr(&gt;|t|)    
+## (Intercept)                                   0.575 0.565986    
+## days_g_90_site                                2.073 0.038507 *  
+## le_l_adi__addr1__national_prcnt               0.966 0.336202    
+## mh_y_bisbas__bis_sum__v01                    -0.722 0.470273    
+## mh_y_upps__pers_sum                           3.488 0.000496 ***
+## mh_y_upps__nurg_sum                           7.588 4.96e-14 ***
+## le_l_coi__addr1__coi__total__national_score  -2.346 0.020067 *  
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## Correlation of Fixed Effects:
-##             (Intr)
-## dys_g_90_st -0.741</code></pre>
+##              (Intr) d__90_ l_l___1___ m______ mh_y_pps__p_ mh_y_pps__n_
+## dys_g_90_st  -0.208                                                    
+## l_l_d__1___  -0.690 -0.047                                             
+## mh_______01  -0.172 -0.029 -0.009                                      
+## mh_y_pps__p_ -0.351 -0.033 -0.030      0.099                           
+## mh_y_pps__n_ -0.361  0.015  0.001     -0.214  -0.112                   
+## l____1_____  -0.732  0.002  0.802     -0.006  -0.029        0.035</code></pre>
 <pre class="r"><code>anova(model_1a_male)</code></pre>
 <pre><code>## Type III Analysis of Variance Table with Satterthwaite&#39;s method
-##                Sum Sq Mean Sq NumDF  DenDF F value  Pr(&gt;F)  
-## days_g_90_site 99.206  99.206     1 919.89  5.7687 0.01651 *
+##                                              Sum Sq Mean Sq NumDF   DenDF
+## days_g_90_site                                74.75   74.75     1  750.21
+## le_l_adi__addr1__national_prcnt               16.25   16.25     1   97.34
+## mh_y_bisbas__bis_sum__v01                      9.07    9.07     1 1950.71
+## mh_y_upps__pers_sum                          211.65  211.65     1 2048.70
+## mh_y_upps__nurg_sum                         1001.39 1001.39     1 2003.15
+## le_l_coi__addr1__coi__total__national_score   95.76   95.76     1  176.90
+##                                             F value    Pr(&gt;F)    
+## days_g_90_site                               4.2976 0.0385072 *  
+## le_l_adi__addr1__national_prcnt              0.9341 0.3362019    
+## mh_y_bisbas__bis_sum__v01                    0.5215 0.4702729    
+## mh_y_upps__pers_sum                         12.1683 0.0004963 ***
+## mh_y_upps__nurg_sum                         57.5719 4.959e-14 ***
+## le_l_coi__addr1__coi__total__national_score  5.5052 0.0200673 *  
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <pre class="r"><code>coefs &lt;- data.frame(coef(summary(model_1a_male)))
 # use normal distribution to approximate p-value
 coefs$p.z &lt;- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs</code></pre>
-<pre><code>##                 Estimate Std..Error        df   t.value     Pr...t..        p.z
-## (Intercept)    4.3960274 0.32938100  78.05829 13.346330 7.704732e-22 0.00000000
-## days_g_90_site 0.1583042 0.06591005 919.88994  2.401822 1.651110e-02 0.01631366</code></pre>
-<pre class="r"><code># car::vif(model_1a_male)</code></pre>
+<pre><code>##                                                 Estimate  Std..Error         df
+## (Intercept)                                  0.576553934 1.003167602  251.32511
+## days_g_90_site                               0.132030994 0.063688842  750.20994
+## le_l_adi__addr1__national_prcnt              0.008690541 0.008992001   97.33737
+## mh_y_bisbas__bis_sum__v01                   -0.032461327 0.044949340 1950.71089
+## mh_y_upps__pers_sum                          0.196155043 0.056232031 2048.70041
+## mh_y_upps__nurg_sum                          0.378199991 0.049844367 2003.14916
+## le_l_coi__addr1__coi__total__national_score -0.017756541 0.007567821  176.89572
+##                                                t.value     Pr...t..
+## (Intercept)                                  0.5747334 5.659857e-01
+## days_g_90_site                               2.0730632 3.850725e-02
+## le_l_adi__addr1__national_prcnt              0.9664747 3.362019e-01
+## mh_y_bisbas__bis_sum__v01                   -0.7221758 4.702729e-01
+## mh_y_upps__pers_sum                          3.4883151 4.963339e-04
+## mh_y_upps__nurg_sum                          7.5876176 4.958995e-14
+## le_l_coi__addr1__coi__total__national_score -2.3463215 2.006726e-02
+##                                                      p.z
+## (Intercept)                                 5.654716e-01
+## days_g_90_site                              3.816640e-02
+## le_l_adi__addr1__national_prcnt             3.338067e-01
+## mh_y_bisbas__bis_sum__v01                   4.701864e-01
+## mh_y_upps__pers_sum                         4.860748e-04
+## mh_y_upps__nurg_sum                         3.264056e-14
+## le_l_coi__addr1__coi__total__national_score 1.895975e-02</code></pre>
+<pre class="r"><code># car::vif(model_1a_male)
+
+# Further analysis looked at the male sex cohort separately to understand the moderating effect of extreme heat on externalizing behaviors. The model revealed that extreme heat was significantly associated with externalizing behaviors in the male cohort (beta = 0.16, SE = 0.07, t = 2.40. p = 0.02).
+
+#Effects size analysis
+standardize_parameters(model_1a_male, method = &quot;refit&quot;)</code></pre>
+<pre><code>## # Standardization method: refit
+## 
+## Parameter                               | Std. Coef. |         95% CI
+## ---------------------------------------------------------------------
+## (Intercept)                             |  -5.49e-03 | [-0.07,  0.06]
+## days g 90 site                          |       0.05 | [ 0.00,  0.09]
+## le l adi addr1 national prcnt           |       0.04 | [-0.04,  0.12]
+## mh y bisbas bis sum v01                 |      -0.02 | [-0.06,  0.03]
+## mh y upps pers sum                      |       0.07 | [ 0.03,  0.11]
+## mh y upps nurg sum                      |       0.16 | [ 0.12,  0.20]
+## le l coi addr1 coi total national score |      -0.09 | [-0.16, -0.01]</code></pre>
+<pre class="r"><code>F_to_eta2(4.2976,1,750.21) #very small effect when looking at  f value of days of 90 site from anova</code></pre>
+<pre><code>## Eta2 (partial) |       95% CI
+## -----------------------------
+## 5.70e-03       | [0.00, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 </div>
 <div id="model-1-observing-effects-of-covariates-with-heat-as-a-moderator-for-females" class="section level3">
 <h3>Model 1 observing effects of covariates with heat as a moderator for
@@ -1047,11 +1154,11 @@ females</h3>
 <pre class="r"><code># Had to drop SVI due to high MC (&gt;3)
 model_1a_female = lmer(
   mh_p_cbcl__synd__ext_sum ~
-    days_g_90_site *
-    # (le_l_adi__addr1__national_prcnt + mh_y_bisbas__bis_sum__v01 + 
-    # # ab_g_stc__cohort_sex +
-    # mh_y_upps__pers_sum + mh_y_upps__nurg_sum +
-    # le_l_coi__addr1__coi__total__national_score) +# le_l_svi__addr1__total_prcntile +
+    days_g_90_site +
+    (le_l_adi__addr1__national_prcnt + mh_y_bisbas__bis_sum__v01 +
+    # ab_g_stc__cohort_sex +
+    mh_y_upps__pers_sum + mh_y_upps__nurg_sum +
+    le_l_coi__addr1__coi__total__national_score) +# le_l_svi__addr1__total_prcntile +
     (1|site_char) + (1|ab_g_stc__design_id__fam),
     data = abcd_f1[
       (abcd_f1$days_g_90_site&gt;0) &amp; (abcd_f1$ab_g_stc__cohort_sex==2),
@@ -1060,47 +1167,117 @@ model_1a_female = lmer(
 summary(model_1a_female)</code></pre>
 <pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
 ## lmerModLmerTest]
-## Formula: mh_p_cbcl__synd__ext_sum ~ days_g_90_site * (1 | site_char) +  
+## Formula: 
+## mh_p_cbcl__synd__ext_sum ~ days_g_90_site + (le_l_adi__addr1__national_prcnt +  
+##     mh_y_bisbas__bis_sum__v01 + mh_y_upps__pers_sum + mh_y_upps__nurg_sum +  
+##     le_l_coi__addr1__coi__total__national_score) + (1 | site_char) +  
 ##     (1 | ab_g_stc__design_id__fam)
 ##    Data: 
 ## abcd_f1[(abcd_f1$days_g_90_site &gt; 0) &amp; (abcd_f1$ab_g_stc__cohort_sex ==  
 ##     2), ]
 ## 
-## REML criterion at convergence: 12166.4
+## REML criterion at convergence: 12124.9
 ## 
 ## Scaled residuals: 
 ##     Min      1Q  Median      3Q     Max 
-## -2.0592 -0.5002 -0.2452  0.2388  5.0144 
+## -1.9398 -0.4733 -0.2358  0.2597  5.1088 
 ## 
 ## Random effects:
 ##  Groups                   Name        Variance Std.Dev.
-##  ab_g_stc__design_id__fam (Intercept) 11.9372  3.4550  
-##  site_char                (Intercept)  0.3076  0.5546  
-##  Residual                             13.8357  3.7196  
+##  ab_g_stc__design_id__fam (Intercept) 11.6646  3.415   
+##  site_char                (Intercept)  0.1722  0.415   
+##  Residual                             13.3287  3.651   
 ## Number of obs: 2004, groups:  ab_g_stc__design_id__fam, 1798; site_char, 22
 ## 
 ## Fixed effects:
-##                 Estimate Std. Error        df t value Pr(&gt;|t|)    
-## (Intercept)      4.09878    0.26739 108.51786   15.33   &lt;2e-16 ***
-## days_g_90_site  -0.08630    0.05567 758.65395   -1.55    0.121    
+##                                               Estimate Std. Error         df
+## (Intercept)                                  1.124e+00  8.267e-01  2.882e+02
+## days_g_90_site                              -1.123e-01  5.404e-02  6.760e+02
+## le_l_adi__addr1__national_prcnt              1.235e-02  7.397e-03  1.151e+02
+## mh_y_bisbas__bis_sum__v01                    4.100e-02  4.093e-02  1.894e+03
+## mh_y_upps__pers_sum                          1.483e-01  4.988e-02  1.927e+03
+## mh_y_upps__nurg_sum                          2.215e-01  4.416e-02  1.946e+03
+## le_l_coi__addr1__coi__total__national_score -9.342e-03  6.414e-03  2.356e+02
+##                                             t value Pr(&gt;|t|)    
+## (Intercept)                                   1.360  0.17501    
+## days_g_90_site                               -2.078  0.03812 *  
+## le_l_adi__addr1__national_prcnt               1.670  0.09759 .  
+## mh_y_bisbas__bis_sum__v01                     1.002  0.31660    
+## mh_y_upps__pers_sum                           2.973  0.00299 ** 
+## mh_y_upps__nurg_sum                           5.015 5.79e-07 ***
+## le_l_coi__addr1__coi__total__national_score  -1.457  0.14658    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## Correlation of Fixed Effects:
-##             (Intr)
-## dys_g_90_st -0.763</code></pre>
+##              (Intr) d__90_ l_l___1___ m______ mh_y_pps__p_ mh_y_pps__n_
+## dys_g_90_st  -0.221                                                    
+## l_l_d__1___  -0.704 -0.039                                             
+## mh_______01  -0.140 -0.028 -0.022                                      
+## mh_y_pps__p_ -0.382 -0.018  0.009      0.070                           
+## mh_y_pps__n_ -0.282  0.001 -0.021     -0.337  -0.141                   
+## l____1_____  -0.743  0.017  0.799     -0.020   0.019       -0.001</code></pre>
 <pre class="r"><code>anova(model_1a_female)</code></pre>
 <pre><code>## Type III Analysis of Variance Table with Satterthwaite&#39;s method
-##                Sum Sq Mean Sq NumDF  DenDF F value Pr(&gt;F)
-## days_g_90_site 33.255  33.255     1 758.65  2.4035 0.1215</code></pre>
+##                                             Sum Sq Mean Sq NumDF   DenDF
+## days_g_90_site                               57.53   57.53     1  675.96
+## le_l_adi__addr1__national_prcnt              37.18   37.18     1  115.07
+## mh_y_bisbas__bis_sum__v01                    13.37   13.37     1 1894.00
+## mh_y_upps__pers_sum                         117.79  117.79     1 1927.08
+## mh_y_upps__nurg_sum                         335.20  335.20     1 1946.43
+## le_l_coi__addr1__coi__total__national_score  28.28   28.28     1  235.65
+##                                             F value   Pr(&gt;F)    
+## days_g_90_site                               4.3165 0.038122 *  
+## le_l_adi__addr1__national_prcnt              2.7897 0.097592 .  
+## mh_y_bisbas__bis_sum__v01                    1.0035 0.316602    
+## mh_y_upps__pers_sum                          8.8376 0.002987 ** 
+## mh_y_upps__nurg_sum                         25.1484 5.79e-07 ***
+## le_l_coi__addr1__coi__total__national_score  2.1215 0.146578    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <pre class="r"><code>coefs &lt;- data.frame(coef(summary(model_1a_female)))
 # use normal distribution to approximate p-value
 coefs$p.z &lt;- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs</code></pre>
-<pre><code>##                   Estimate Std..Error       df   t.value     Pr...t..       p.z
-## (Intercept)     4.09878366 0.26738820 108.5179 15.328962 6.480875e-29 0.0000000
-## days_g_90_site -0.08630033 0.05566557 758.6540 -1.550336 1.214780e-01 0.1210609</code></pre>
-<pre class="r"><code># car::vif(model_1a_female)</code></pre>
+<pre><code>##                                                 Estimate  Std..Error        df
+## (Intercept)                                  1.124054251 0.826740028  288.1741
+## days_g_90_site                              -0.112275344 0.054040544  675.9583
+## le_l_adi__addr1__national_prcnt              0.012355051 0.007397224  115.0705
+## mh_y_bisbas__bis_sum__v01                    0.040999957 0.040929190 1894.0006
+## mh_y_upps__pers_sum                          0.148290997 0.049882385 1927.0807
+## mh_y_upps__nurg_sum                          0.221450333 0.044159165 1946.4312
+## le_l_coi__addr1__coi__total__national_score -0.009341776 0.006413728  235.6493
+##                                               t.value     Pr...t..          p.z
+## (Intercept)                                  1.359622 1.750123e-01 1.739494e-01
+## days_g_90_site                              -2.077613 3.812194e-02 3.774500e-02
+## le_l_adi__addr1__national_prcnt              1.670228 9.759223e-02 9.487423e-02
+## mh_y_bisbas__bis_sum__v01                    1.001729 3.166025e-01 3.164745e-01
+## mh_y_upps__pers_sum                          2.972813 2.987435e-03 2.950843e-03
+## mh_y_upps__nurg_sum                          5.014822 5.789962e-07 5.308269e-07
+## le_l_coi__addr1__coi__total__national_score -1.456528 1.465778e-01 1.452467e-01</code></pre>
+<pre class="r"><code># car::vif(model_1a_female)
+# Looking at the female sex, the model revealed the moderating effect of extreme heat on externalizing behaviors for the female sex cohort was not significant (beta = - 0.09, SE = 0.06, t = -1.55, p = 0.12).
+
+standardize_parameters(model_1a_female, method = &quot;refit&quot;)</code></pre>
+<pre><code>## # Standardization method: refit
+## 
+## Parameter                               | Std. Coef. |         95% CI
+## ---------------------------------------------------------------------
+## (Intercept)                             |  -3.71e-03 | [-0.06,  0.05]
+## days g 90 site                          |      -0.05 | [-0.10,  0.00]
+## le l adi addr1 national prcnt           |       0.07 | [-0.01,  0.15]
+## mh y bisbas bis sum v01                 |       0.02 | [-0.02,  0.07]
+## mh y upps pers sum                      |       0.06 | [ 0.02,  0.11]
+## mh y upps nurg sum                      |       0.12 | [ 0.07,  0.16]
+## le l coi addr1 coi total national score |      -0.06 | [-0.13,  0.02]</code></pre>
+<pre class="r"><code>F_to_eta2(4.3165 ,1,675.96) #very small effect when looking at  f value of days of 90 site from anova</code></pre>
+<pre><code>## Eta2 (partial) |       95% CI
+## -----------------------------
+## 6.35e-03       | [0.00, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at [1.00].</code></pre>
+<p># Below is just testing for model 2 which includes the moderating
+effect of heat on all covariates? Unsure how to interpret</p>
 <pre class="r"><code>model_2 = lmer(
   mh_p_cbcl__synd__ext_sum ~
     le_l_adi__addr1__national_prcnt + mh_y_bisbas__bis_sum__v01 + 

@@ -25,6 +25,8 @@ library(dotwhisker)
 library(effectsize)
 library(pwr)
 library(arrow)
+library(emmeans)
+library(effectsize)
 # library(ggpubr)
 # library(apaTables)
 ```
@@ -245,7 +247,8 @@ abcd_f$days_g_90_consotrium = rowSums(abcd_f[,global_temp_cols])
 target_vars = c(
   'mh_p_cbcl__synd__ext_sum', 'le_l_adi__addr1__national_prcnt',
   'days_g_90_consotrium', 'mh_y_bisbas__bis_sum__v01', 'mh_y_upps__pers_sum', 'ab_g_stc__cohort_sex', 
-  'le_l_coi__addr1__coi__total__national_score', 'le_l_svi__addr1__total_prcntile', 'mh_y_upps__nurg_sum'
+  'le_l_coi__addr1__coi__total__national_score', 'le_l_svi__addr1__total_prcntile', 'mh_y_upps__nurg_sum',
+  'days_g_90_site'
   )
 # Rewrite dataset
 abcd_f1 = abcd_f
@@ -369,6 +372,19 @@ coefs
 car::vif(model_1a)
 
 # Analysis revealed a significant moderating effect of extreme heat on cohort sex and externalizing behaviors (beta =  -0.25, SE = 0.08, t = -3.19, p = 0.001).
+
+#Checking to see if relationship gets stronger the more days exposed to extreme heat for sex
+slopes1a = emtrends(
+  model_1a,
+  specs = ~ab_g_stc__cohort_sex,
+  var = "days_g_90_site",
+  # at = list(ab_g_stc__cohort_sex = c(1,2,3,4,5)),
+  pbkrtest.limit = 4148,
+  adjust = "fdr")
+print(slopes1a)
+
+
+
 ```
 
 ### Model 1 observing effects of covariates with heat as a moderator for males
@@ -378,11 +394,11 @@ car::vif(model_1a)
 # Had to drop SVI due to high MC (>3)
 model_1a_male = lmer(
   mh_p_cbcl__synd__ext_sum ~
-    days_g_90_site *
-    # (le_l_adi__addr1__national_prcnt + mh_y_bisbas__bis_sum__v01 + 
+    days_g_90_site +
+    (le_l_adi__addr1__national_prcnt + mh_y_bisbas__bis_sum__v01 +
     # # ab_g_stc__cohort_sex +
-    # mh_y_upps__pers_sum + mh_y_upps__nurg_sum +
-    # le_l_coi__addr1__coi__total__national_score) +# le_l_svi__addr1__total_prcntile +
+    mh_y_upps__pers_sum + mh_y_upps__nurg_sum +
+    le_l_coi__addr1__coi__total__national_score) +# le_l_svi__addr1__total_prcntile +
     (1|site_char) + (1|ab_g_stc__design_id__fam),
     data = abcd_f1[
       (abcd_f1$days_g_90_site>0) & (abcd_f1$ab_g_stc__cohort_sex==1),
@@ -397,6 +413,17 @@ coefs
 # car::vif(model_1a_male)
 
 # Further analysis looked at the male sex cohort separately to understand the moderating effect of extreme heat on externalizing behaviors. The model revealed that extreme heat was significantly associated with externalizing behaviors in the male cohort (beta = 0.16, SE = 0.07, t = 2.40. p = 0.02).
+
+#Effects size analysis
+standardize_parameters(model_1a_male, method = "refit")
+F_to_eta2(4.2976,1,750.21) #very small effect when looking at  f value of days of 90 site from anova
+
+
+
+
+
+
+
 ```
 
 
@@ -406,11 +433,11 @@ coefs
 # Had to drop SVI due to high MC (>3)
 model_1a_female = lmer(
   mh_p_cbcl__synd__ext_sum ~
-    days_g_90_site *
-    # (le_l_adi__addr1__national_prcnt + mh_y_bisbas__bis_sum__v01 + 
-    # # ab_g_stc__cohort_sex +
-    # mh_y_upps__pers_sum + mh_y_upps__nurg_sum +
-    # le_l_coi__addr1__coi__total__national_score) +# le_l_svi__addr1__total_prcntile +
+    days_g_90_site +
+    (le_l_adi__addr1__national_prcnt + mh_y_bisbas__bis_sum__v01 +
+    # ab_g_stc__cohort_sex +
+    mh_y_upps__pers_sum + mh_y_upps__nurg_sum +
+    le_l_coi__addr1__coi__total__national_score) +# le_l_svi__addr1__total_prcntile +
     (1|site_char) + (1|ab_g_stc__design_id__fam),
     data = abcd_f1[
       (abcd_f1$days_g_90_site>0) & (abcd_f1$ab_g_stc__cohort_sex==2),
@@ -424,6 +451,14 @@ coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 # car::vif(model_1a_female)
 # Looking at the female sex, the model revealed the moderating effect of extreme heat on externalizing behaviors for the female sex cohort was not significant (beta = - 0.09, SE = 0.06, t = -1.55, p = 0.12).
+
+standardize_parameters(model_1a_female, method = "refit")
+F_to_eta2(4.3165 ,1,675.96) #very small effect when looking at  f value of days of 90 site from anova
+
+
+
+
+
 ```
 
  # Below is just testing for model 2 which includes the moderating effect of heat on all covariates? Unsure how to interpret
