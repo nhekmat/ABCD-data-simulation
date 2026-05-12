@@ -27,6 +27,9 @@ library(pwr)
 library(arrow)
 library(emmeans)
 library(effectsize)
+library(simr)
+library(modelsummary)
+library(lmerTest)
 # library(ggpubr)
 # library(apaTables)
 ```
@@ -274,7 +277,7 @@ abcd_f2 = abcd_f1[abcd_f1$days_g_90_site>0,]
 
 # Model Evaluation
 
-### Model 1 observing effects of covariates without heat as a moderator
+### 1. Model 1 observing effects of covariates without heat as a moderator
 
 ```{r lm_model_1}
 # Had to drop SVI due to high MC (>3)
@@ -298,6 +301,11 @@ coefs
 car::vif(model_1)
 modelsummary::get_gof(model_1)
 
+F_to_eta2(32.6189 ,1,4122.7) #ab_g_stc__cohort_sex
+F_to_eta2(20.8333 ,1, 3964.1) #mh_y_upps__pers_sum
+F_to_eta2(86.8056,1,3907.4 ) #mh_y_upps__nurg_sum
+F_to_eta2(7.4252,1,324.7) # le_l_coi__addr1__coi__total__national_score  
+
 # Interpretation of values
 # The a linear mixed effects model analyzing the relationship between externalizing symptoms and area deprivation national score, behavioral inhibition score, days exposed to extreme heat, cohort sex, UPPS perserverance score, UPPS negative urgency score, and child oppertunity index national score, UPPS subscales of Negative Urgency (beta = 0.31, SE = 0.03, t = 9.32, p < 0.001) and Perseverance (beta = 0.17, SE = 0.04, t = 4.56, p < 0.001) was positively associated with externalizing behaviors. Sex was positively associated with externalizing behaviors (beta = -1.00, SE =  0.17, t = -5.71, p < 0.001). Childhood opportunity index scores (beta =-0.01, SE = 0.01, t = -2.72, p = .006). Area deprivation index, extreme heat exposure, and BIS score were not significantly associated with externalizing behaviors.
 
@@ -313,7 +321,7 @@ modelsummary::get_gof(model_1)
 #      mh_y_upps_nurg_sum, data = abcd)
 ```
 
-# Moderating effect of heat for model 1 only for sex
+# 2. Moderating effect of heat for model 1 only for sex
 
 ```{r}
 # Had to drop SVI due to high MC (>3)
@@ -333,11 +341,13 @@ coefs <- data.frame(coef(summary(model_1_moderating)))
 coefs$p.z <- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs
 car::vif(model_1_moderating)
-library(modelsummary)
-library(lmerTest)
+
 get_gof(model_1_moderating)
 
-
+F_to_eta2(20.5901 ,1,3962.2 ) #mh_y_upps__pers_sum                          
+F_to_eta2(88.0050 ,1,3906.1 ) #mh_y_upps__nurg_sum                         
+F_to_eta2(7.5574,1,309.8  ) #le_l_coi__addr1__coi__total__national_score  
+F_to_eta2(9.8379  ,1,4132.1  ) #days_g_90_site:ab_g_stc__cohort_sex   
 # Interpretation of values
 # The a linear mixed effects model analyzing the relationship between externalizing symptoms and included the moderating effect of extreme heat on cohort sex. The model included area deprivation national score, behavioral inhibition score, days exposed to extreme heat, UPPS perserverance score, UPPS negative urgency score, and child oppertunity index national score.
 # Analysis revealed a significant moderating effect of extreme heat on cohort sex (beta =  -0.24, SE = 0.005, t = -2.75, p = 0.002). 
@@ -349,7 +359,7 @@ get_gof(model_1_moderating)
 ```
 
 
-### Model 1 observing effects of covariates with heat as a moderator
+### 3. Model 1 observing effects of covariates with heat as a moderator
 
 ```{r lm_model_1a}
 # Had to drop SVI due to high MC (>3)
@@ -383,18 +393,28 @@ slopes1a = emtrends(
   adjust = "fdr")
 print(slopes1a)
 
+effectssize1a = standardize_parameters(model_1a,
+                                       method = "refit")
+print(effectssize1a)
 
+F_to_eta2(6.0395,1,4007.4) #for perseverence
+F_to_eta2(29.0626 ,1,3932.9) #for negative urgency
+F_to_eta2(10.1993, 1, 4127.7) # days_g_90_site:ab_g_stc__cohort_sex
+# poweranalysis1 <- powerSim(model_1a,
+#                            test = fixed ("days_g_90_site:ab_g_stc__cohort_sex2", method = "kr"),
+#                            nsim = 1000)
+# print(poweranalysis1)
 
 ```
 
-### Model 1 observing effects of covariates with heat as a moderator for males
+### 4. Model 1 observing effects of covariates with heat as a moderator for males
 
 ```{r}
 
 # Had to drop SVI due to high MC (>3)
 model_1a_male = lmer(
   mh_p_cbcl__synd__ext_sum ~
-    days_g_90_site +
+    days_g_90_site *
     (le_l_adi__addr1__national_prcnt + mh_y_bisbas__bis_sum__v01 +
     # # ab_g_stc__cohort_sex +
     mh_y_upps__pers_sum + mh_y_upps__nurg_sum +
@@ -416,9 +436,15 @@ coefs
 
 #Effects size analysis
 standardize_parameters(model_1a_male, method = "refit")
-F_to_eta2(4.2976,1,750.21) #very small effect when looking at  f value of days of 90 site from anova
+F_to_eta2(16.268,1,2047.4) #mh_y_upps__nurg_sum
 
 
+# poweranalysis1a_nurg <- powerSim(model_1a_male,
+#                            test = fixed ("mh_y_upps__pers_sum", method = "kr"),
+#                            nsim = 1000)
+# 
+# 
+# print(poweranalysis1a_nurg)
 
 
 
@@ -427,13 +453,13 @@ F_to_eta2(4.2976,1,750.21) #very small effect when looking at  f value of days o
 ```
 
 
-### Model 1 observing effects of covariates with heat as a moderator for females
+### 5. Model 1 observing effects of covariates with heat as a moderator for females
 
 ```{r}
 # Had to drop SVI due to high MC (>3)
 model_1a_female = lmer(
   mh_p_cbcl__synd__ext_sum ~
-    days_g_90_site +
+    days_g_90_site *
     (le_l_adi__addr1__national_prcnt + mh_y_bisbas__bis_sum__v01 +
     # ab_g_stc__cohort_sex +
     mh_y_upps__pers_sum + mh_y_upps__nurg_sum +
@@ -453,15 +479,29 @@ coefs
 # Looking at the female sex, the model revealed the moderating effect of extreme heat on externalizing behaviors for the female sex cohort was not significant (beta = - 0.09, SE = 0.06, t = -1.55, p = 0.12).
 
 standardize_parameters(model_1a_female, method = "refit")
-F_to_eta2(4.3165 ,1,675.96) #very small effect when looking at  f value of days of 90 site from anova
+F_to_eta2(6.1878 ,1,1932.38) #mh_y_upps__pers_sum
+F_to_eta2(13.6373,1,1890.35) #mh_y_upps__nurg_sum
+F_to_eta2(6.2569,1,915.30) #le_l_coi__addr1__coi__total__national_score
+F_to_eta2(4.1919 ,1,1830.61) #days_g_90_site:le_l_coi__addr1__coi__total__national_score 
+# poweranalysis1a_femaleupps <- powerSim(model_1a_female,
+#                            test = fixed ("mh_y_upps__pers_sum", method = "kr"),
+#                            nsim = 1000)
+# poweranalysis1a_femalenurg <- powerSim(model_1a_female,
+#                            test = fixed ("mh_y_upps__pers_sum", method = "kr"),
+#                            nsim = 1000)
+# poweranalysis1a_femalecoi <- powerSim(model_1a_female,
+#                            test = fixed ("mh_y_upps__pers_sum", method = "kr"),
+#                            nsim = 1000)
 
-
+# print(poweranalysis1a_femaleupps)
+# print(poweranalysis1a_femalenurg)
+# print(poweranalysis1a_femalecoi)
 
 
 
 ```
 
- # Below is just testing for model 2 which includes the moderating effect of heat on all covariates? Unsure how to interpret
+ # 6. Below is just testing for model 2 which includes the moderating effect of heat on all covariates? Unsure how to interpret
 
 ```{r}
 model_2 = lmer(

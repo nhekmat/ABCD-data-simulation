@@ -458,7 +458,7 @@ abcd_f2 = abcd_f1[abcd_f1$days_g_90_site&gt;0,]</code></pre>
 <div id="model-evaluation" class="section level1">
 <h1>Model Evaluation</h1>
 <div id="model-1-observing-effects-of-covariates-without-heat-as-a-moderator" class="section level3">
-<h3>Model 1 observing effects of covariates without heat as a
+<h3>1. Model 1 observing effects of covariates without heat as a
 moderator</h3>
 <pre class="r"><code># Had to drop SVI due to high MC (&gt;3)
 model_1 = lmer(
@@ -471,7 +471,8 @@ model_1 = lmer(
     data = abcd_f1[abcd_f1$days_g_90_site&gt;0,]
 )
 summary(model_1)</code></pre>
-<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+## lmerModLmerTest]
 ## Formula: mh_p_cbcl__synd__ext_sum ~ le_l_adi__addr1__national_prcnt +  
 ##     mh_y_bisbas__bis_sum__v01 + days_g_90_site + ab_g_stc__cohort_sex +  
 ##     mh_y_upps__pers_sum + mh_y_upps__nurg_sum + le_l_coi__addr1__coi__total__national_score +  
@@ -492,15 +493,26 @@ summary(model_1)</code></pre>
 ## Number of obs: 4148, groups:  ab_g_stc__design_id__fam, 3613; site_char, 22
 ## 
 ## Fixed effects:
-##                                              Estimate Std. Error t value
-## (Intercept)                                  1.510405   0.702919   2.149
-## le_l_adi__addr1__national_prcnt              0.008168   0.006435   1.269
-## mh_y_bisbas__bis_sum__v01                   -0.008685   0.030432  -0.285
-## days_g_90_site                               0.008825   0.043282   0.204
-## ab_g_stc__cohort_sex2                       -0.995403   0.174287  -5.711
-## mh_y_upps__pers_sum                          0.171998   0.037683   4.564
-## mh_y_upps__nurg_sum                          0.309679   0.033238   9.317
-## le_l_coi__addr1__coi__total__national_score -0.014565   0.005345  -2.725
+##                                               Estimate Std. Error         df
+## (Intercept)                                  1.510e+00  7.029e-01  3.483e+02
+## le_l_adi__addr1__national_prcnt              8.168e-03  6.435e-03  1.737e+02
+## mh_y_bisbas__bis_sum__v01                   -8.685e-03  3.043e-02  3.846e+03
+## days_g_90_site                               8.825e-03  4.328e-02  1.544e+03
+## ab_g_stc__cohort_sex2                       -9.954e-01  1.743e-01  4.123e+03
+## mh_y_upps__pers_sum                          1.720e-01  3.768e-02  3.964e+03
+## mh_y_upps__nurg_sum                          3.097e-01  3.324e-02  3.907e+03
+## le_l_coi__addr1__coi__total__national_score -1.456e-02  5.345e-03  3.247e+02
+##                                             t value Pr(&gt;|t|)    
+## (Intercept)                                   2.149  0.03234 *  
+## le_l_adi__addr1__national_prcnt               1.269  0.20604    
+## mh_y_bisbas__bis_sum__v01                    -0.285  0.77535    
+## days_g_90_site                                0.204  0.83847    
+## ab_g_stc__cohort_sex2                        -5.711 1.20e-08 ***
+## mh_y_upps__pers_sum                           4.564 5.16e-06 ***
+## mh_y_upps__nurg_sum                           9.317  &lt; 2e-16 ***
+## le_l_coi__addr1__coi__total__national_score  -2.725  0.00678 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## Correlation of Fixed Effects:
 ##              (Intr) l_l___1___ m______ d__90_ a_____ mh_y_pps__p_ mh_y_pps__n_
@@ -512,28 +524,47 @@ summary(model_1)</code></pre>
 ## mh_y_pps__n_ -0.309 -0.008     -0.275   0.005  0.100 -0.126                   
 ## l____1_____  -0.749  0.820     -0.015   0.004  0.012 -0.001        0.017</code></pre>
 <pre class="r"><code>anova(model_1)</code></pre>
-<pre><code>## Analysis of Variance Table
-##                                             npar  Sum Sq Mean Sq F value
-## le_l_adi__addr1__national_prcnt                1  680.36  680.36 42.4203
-## mh_y_bisbas__bis_sum__v01                      1   38.07   38.07  2.3738
-## days_g_90_site                                 1    3.32    3.32  0.2070
-## ab_g_stc__cohort_sex                           1  808.09  808.09 50.3839
-## mh_y_upps__pers_sum                            1  537.65  537.65 33.5220
-## mh_y_upps__nurg_sum                            1 1406.57 1406.57 87.6988
-## le_l_coi__addr1__coi__total__national_score    1  119.09  119.09  7.4252</code></pre>
+<pre><code>## Type III Analysis of Variance Table with Satterthwaite&#39;s method
+##                                              Sum Sq Mean Sq NumDF  DenDF
+## le_l_adi__addr1__national_prcnt               25.84   25.84     1  173.7
+## mh_y_bisbas__bis_sum__v01                      1.31    1.31     1 3845.9
+## days_g_90_site                                 0.67    0.67     1 1544.4
+## ab_g_stc__cohort_sex                         523.16  523.16     1 4122.7
+## mh_y_upps__pers_sum                          334.14  334.14     1 3964.1
+## mh_y_upps__nurg_sum                         1392.25 1392.25     1 3907.4
+## le_l_coi__addr1__coi__total__national_score  119.09  119.09     1  324.7
+##                                             F value    Pr(&gt;F)    
+## le_l_adi__addr1__national_prcnt              1.6111   0.20604    
+## mh_y_bisbas__bis_sum__v01                    0.0815   0.77535    
+## days_g_90_site                               0.0416   0.83847    
+## ab_g_stc__cohort_sex                        32.6189 1.200e-08 ***
+## mh_y_upps__pers_sum                         20.8333 5.162e-06 ***
+## mh_y_upps__nurg_sum                         86.8056 &lt; 2.2e-16 ***
+## le_l_coi__addr1__coi__total__national_score  7.4252   0.00678 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <pre class="r"><code>coefs &lt;- data.frame(coef(summary(model_1)))
 # use normal distribution to approximate p-value
 coefs$p.z &lt;- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs</code></pre>
-<pre><code>##                                                 Estimate  Std..Error    t.value
-## (Intercept)                                  1.510405111 0.702919090  2.1487610
-## le_l_adi__addr1__national_prcnt              0.008168123 0.006435235  1.2692812
-## mh_y_bisbas__bis_sum__v01                   -0.008685330 0.030432145 -0.2853999
-## days_g_90_site                               0.008824605 0.043281936  0.2038866
-## ab_g_stc__cohort_sex2                       -0.995403007 0.174286737 -5.7112952
-## mh_y_upps__pers_sum                          0.171997856 0.037682908  4.5643466
-## mh_y_upps__nurg_sum                          0.309678511 0.033238170  9.3169544
-## le_l_coi__addr1__coi__total__national_score -0.014565411 0.005345274 -2.7249138
+<pre><code>##                                                 Estimate  Std..Error        df
+## (Intercept)                                  1.510405111 0.702919090  348.3277
+## le_l_adi__addr1__national_prcnt              0.008168123 0.006435235  173.6519
+## mh_y_bisbas__bis_sum__v01                   -0.008685330 0.030432145 3845.9127
+## days_g_90_site                               0.008824605 0.043281936 1544.4464
+## ab_g_stc__cohort_sex2                       -0.995403007 0.174286737 4122.7463
+## mh_y_upps__pers_sum                          0.171997856 0.037682908 3964.0996
+## mh_y_upps__nurg_sum                          0.309678511 0.033238170 3907.3956
+## le_l_coi__addr1__coi__total__national_score -0.014565411 0.005345274  324.7481
+##                                                t.value     Pr...t..
+## (Intercept)                                  2.1487610 3.234215e-02
+## le_l_adi__addr1__national_prcnt              1.2692812 2.060393e-01
+## mh_y_bisbas__bis_sum__v01                   -0.2853999 7.753532e-01
+## days_g_90_site                               0.2038866 8.384690e-01
+## ab_g_stc__cohort_sex2                       -5.7112952 1.200177e-08
+## mh_y_upps__pers_sum                          4.5643466 5.162354e-06
+## mh_y_upps__nurg_sum                          9.3169544 1.946566e-20
+## le_l_coi__addr1__coi__total__national_score -2.7249138 6.780293e-03
 ##                                                      p.z
 ## (Intercept)                                 3.165335e-02
 ## le_l_adi__addr1__national_prcnt             2.043408e-01
@@ -561,6 +592,30 @@ coefs</code></pre>
 <pre class="r"><code>modelsummary::get_gof(model_1)</code></pre>
 <pre><code>##        aic      bic r2.conditional r2.marginal       icc     rmse nobs
 ## 1 25874.92 25944.56      0.5055041  0.05246563 0.4781235 3.008787 4148</code></pre>
+<pre class="r"><code>F_to_eta2(32.6189 ,1,4122.7) #ab_g_stc__cohort_sex</code></pre>
+<pre><code>## Eta2 (partial) |       95% CI
+## -----------------------------
+## 7.85e-03       | [0.00, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at [1.00].</code></pre>
+<pre class="r"><code>F_to_eta2(20.8333 ,1, 3964.1) #mh_y_upps__pers_sum</code></pre>
+<pre><code>## Eta2 (partial) |       95% CI
+## -----------------------------
+## 5.23e-03       | [0.00, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at [1.00].</code></pre>
+<pre class="r"><code>F_to_eta2(86.8056,1,3907.4 ) #mh_y_upps__nurg_sum</code></pre>
+<pre><code>## Eta2 (partial) |       95% CI
+## -----------------------------
+## 0.02           | [0.01, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at [1.00].</code></pre>
+<pre class="r"><code>F_to_eta2(7.4252,1,324.7) # le_l_coi__addr1__coi__total__national_score  </code></pre>
+<pre><code>## Eta2 (partial) |       95% CI
+## -----------------------------
+## 0.02           | [0.00, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <pre class="r"><code># Interpretation of values
 # The a linear mixed effects model analyzing the relationship between externalizing symptoms and area deprivation national score, behavioral inhibition score, days exposed to extreme heat, cohort sex, UPPS perserverance score, UPPS negative urgency score, and child oppertunity index national score, UPPS subscales of Negative Urgency (beta = 0.31, SE = 0.03, t = 9.32, p &lt; 0.001) and Perseverance (beta = 0.17, SE = 0.04, t = 4.56, p &lt; 0.001) was positively associated with externalizing behaviors. Sex was positively associated with externalizing behaviors (beta = -1.00, SE =  0.17, t = -5.71, p &lt; 0.001). Childhood opportunity index scores (beta =-0.01, SE = 0.01, t = -2.72, p = .006). Area deprivation index, extreme heat exposure, and BIS score were not significantly associated with externalizing behaviors.
 
@@ -577,7 +632,7 @@ coefs</code></pre>
 </div>
 </div>
 <div id="moderating-effect-of-heat-for-model-1-only-for-sex" class="section level1">
-<h1>Moderating effect of heat for model 1 only for sex</h1>
+<h1>2. Moderating effect of heat for model 1 only for sex</h1>
 <pre class="r"><code># Had to drop SVI due to high MC (&gt;3)
 model_1_moderating = lmer(
   mh_p_cbcl__synd__ext_sum ~
@@ -589,7 +644,8 @@ model_1_moderating = lmer(
     data = abcd_f1[abcd_f1$days_g_90_site&gt;0,]
 )
 summary(model_1_moderating)</code></pre>
-<pre><code>## Linear mixed model fit by REML [&#39;lmerMod&#39;]
+<pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
+## lmerModLmerTest]
 ## Formula: mh_p_cbcl__synd__ext_sum ~ le_l_adi__addr1__national_prcnt +  
 ##     mh_y_bisbas__bis_sum__v01 + days_g_90_site * ab_g_stc__cohort_sex +  
 ##     mh_y_upps__pers_sum + mh_y_upps__nurg_sum + le_l_coi__addr1__coi__total__national_score +  
@@ -610,16 +666,28 @@ summary(model_1_moderating)</code></pre>
 ## Number of obs: 4148, groups:  ab_g_stc__design_id__fam, 3613; site_char, 22
 ## 
 ## Fixed effects:
-##                                              Estimate Std. Error t value
-## (Intercept)                                  1.038237   0.714462   1.453
-## le_l_adi__addr1__national_prcnt              0.008193   0.006389   1.282
-## mh_y_bisbas__bis_sum__v01                   -0.009039   0.030397  -0.297
-## days_g_90_site                               0.126651   0.057174   2.215
-## ab_g_stc__cohort_sex2                       -0.046216   0.349139  -0.132
-## mh_y_upps__pers_sum                          0.170806   0.037642   4.538
-## mh_y_upps__nurg_sum                          0.311499   0.033205   9.381
-## le_l_coi__addr1__coi__total__national_score -0.014616   0.005317  -2.749
-## days_g_90_site:ab_g_stc__cohort_sex2        -0.240884   0.076799  -3.137
+##                                               Estimate Std. Error         df
+## (Intercept)                                  1.038e+00  7.145e-01  3.676e+02
+## le_l_adi__addr1__national_prcnt              8.193e-03  6.389e-03  1.648e+02
+## mh_y_bisbas__bis_sum__v01                   -9.039e-03  3.040e-02  3.842e+03
+## days_g_90_site                               1.267e-01  5.717e-02  2.690e+03
+## ab_g_stc__cohort_sex2                       -4.622e-02  3.491e-01  4.115e+03
+## mh_y_upps__pers_sum                          1.708e-01  3.764e-02  3.962e+03
+## mh_y_upps__nurg_sum                          3.115e-01  3.320e-02  3.906e+03
+## le_l_coi__addr1__coi__total__national_score -1.462e-02  5.317e-03  3.098e+02
+## days_g_90_site:ab_g_stc__cohort_sex2        -2.409e-01  7.680e-02  4.132e+03
+##                                             t value Pr(&gt;|t|)    
+## (Intercept)                                   1.453  0.14703    
+## le_l_adi__addr1__national_prcnt               1.282  0.20153    
+## mh_y_bisbas__bis_sum__v01                    -0.297  0.76621    
+## days_g_90_site                                2.215  0.02683 *  
+## ab_g_stc__cohort_sex2                        -0.132  0.89470    
+## mh_y_upps__pers_sum                           4.538 5.86e-06 ***
+## mh_y_upps__nurg_sum                           9.381  &lt; 2e-16 ***
+## le_l_coi__addr1__coi__total__national_score  -2.749  0.00633 ** 
+## days_g_90_site:ab_g_stc__cohort_sex2         -3.137  0.00172 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## Correlation of Fixed Effects:
 ##              (Intr) l_l___1___ m______ dy__90_ a_____ mh_y_pps__p_ mh_y_pps__n_
@@ -641,30 +709,51 @@ summary(model_1_moderating)</code></pre>
 ## l____1_____            
 ## d__90_:____   0.008</code></pre>
 <pre class="r"><code>anova(model_1_moderating)</code></pre>
-<pre><code>## Analysis of Variance Table
-##                                             npar  Sum Sq Mean Sq F value
-## le_l_adi__addr1__national_prcnt                1  684.78  684.78 42.8911
-## mh_y_bisbas__bis_sum__v01                      1   38.14   38.14  2.3890
-## days_g_90_site                                 1    3.37    3.37  0.2113
-## ab_g_stc__cohort_sex                           1  805.79  805.79 50.4704
-## mh_y_upps__pers_sum                            1  535.61  535.61 33.5479
-## mh_y_upps__nurg_sum                            1 1402.75 1402.75 87.8607
-## le_l_coi__addr1__coi__total__national_score    1  118.39  118.39  7.4154
-## days_g_90_site:ab_g_stc__cohort_sex            1  157.07  157.07  9.8379</code></pre>
+<pre><code>## Type III Analysis of Variance Table with Satterthwaite&#39;s method
+##                                              Sum Sq Mean Sq NumDF  DenDF
+## le_l_adi__addr1__national_prcnt               26.25   26.25     1  164.8
+## mh_y_bisbas__bis_sum__v01                      1.41    1.41     1 3842.1
+## days_g_90_site                                 0.33    0.33     1 1472.1
+## ab_g_stc__cohort_sex                           0.28    0.28     1 4114.7
+## mh_y_upps__pers_sum                          328.73  328.73     1 3962.2
+## mh_y_upps__nurg_sum                         1405.05 1405.05     1 3906.1
+## le_l_coi__addr1__coi__total__national_score  120.66  120.66     1  309.8
+## days_g_90_site:ab_g_stc__cohort_sex          157.07  157.07     1 4132.1
+##                                             F value    Pr(&gt;F)    
+## le_l_adi__addr1__national_prcnt              1.6443  0.201534    
+## mh_y_bisbas__bis_sum__v01                    0.0884  0.766207    
+## days_g_90_site                               0.0207  0.885683    
+## ab_g_stc__cohort_sex                         0.0175  0.894698    
+## mh_y_upps__pers_sum                         20.5901 5.858e-06 ***
+## mh_y_upps__nurg_sum                         88.0050 &lt; 2.2e-16 ***
+## le_l_coi__addr1__coi__total__national_score  7.5574  0.006327 ** 
+## days_g_90_site:ab_g_stc__cohort_sex          9.8379  0.001722 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <pre class="r"><code>coefs &lt;- data.frame(coef(summary(model_1_moderating)))
 # use normal distribution to approximate p-value
 coefs$p.z &lt;- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs</code></pre>
-<pre><code>##                                                 Estimate  Std..Error    t.value
-## (Intercept)                                  1.038237339 0.714461580  1.4531745
-## le_l_adi__addr1__national_prcnt              0.008192773 0.006389071  1.2823106
-## mh_y_bisbas__bis_sum__v01                   -0.009038957 0.030397276 -0.2973608
-## days_g_90_site                               0.126650950 0.057173529  2.2152026
-## ab_g_stc__cohort_sex2                       -0.046215584 0.349139188 -0.1323701
-## mh_y_upps__pers_sum                          0.170806117 0.037642120  4.5376328
-## mh_y_upps__nurg_sum                          0.311498934 0.033204951  9.3810991
-## le_l_coi__addr1__coi__total__national_score -0.014615710 0.005316582 -2.7490803
-## days_g_90_site:ab_g_stc__cohort_sex2        -0.240884340 0.076799495 -3.1365355
+<pre><code>##                                                 Estimate  Std..Error        df
+## (Intercept)                                  1.038237339 0.714461580  367.6056
+## le_l_adi__addr1__national_prcnt              0.008192773 0.006389071  164.8414
+## mh_y_bisbas__bis_sum__v01                   -0.009038957 0.030397276 3842.0742
+## days_g_90_site                               0.126650950 0.057173529 2689.8629
+## ab_g_stc__cohort_sex2                       -0.046215584 0.349139188 4114.6531
+## mh_y_upps__pers_sum                          0.170806117 0.037642120 3962.1549
+## mh_y_upps__nurg_sum                          0.311498934 0.033204951 3906.0968
+## le_l_coi__addr1__coi__total__national_score -0.014615710 0.005316582  309.7842
+## days_g_90_site:ab_g_stc__cohort_sex2        -0.240884340 0.076799495 4132.1281
+##                                                t.value     Pr...t..
+## (Intercept)                                  1.4531745 1.470284e-01
+## le_l_adi__addr1__national_prcnt              1.2823106 2.015341e-01
+## mh_y_bisbas__bis_sum__v01                   -0.2973608 7.662072e-01
+## days_g_90_site                               2.2152026 2.682964e-02
+## ab_g_stc__cohort_sex2                       -0.1323701 8.946980e-01
+## mh_y_upps__pers_sum                          4.5376328 5.857512e-06
+## mh_y_upps__nurg_sum                          9.3810991 1.075836e-20
+## le_l_coi__addr1__coi__total__national_score -2.7490803 6.327059e-03
+## days_g_90_site:ab_g_stc__cohort_sex2        -3.1365355 1.721582e-03
 ##                                                      p.z
 ## (Intercept)                                 1.461753e-01
 ## le_l_adi__addr1__national_prcnt             1.997337e-01
@@ -692,26 +781,33 @@ coefs</code></pre>
 ##                                    3.041041 
 ##         days_g_90_site:ab_g_stc__cohort_sex 
 ##                                    4.793166</code></pre>
-<pre class="r"><code>library(modelsummary)</code></pre>
-<pre><code>## Warning: package &#39;modelsummary&#39; was built under R version 4.5.2</code></pre>
-<pre><code>## 
-## Attaching package: &#39;modelsummary&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:psych&#39;:
-## 
-##     SD</code></pre>
-<pre class="r"><code>library(lmerTest)</code></pre>
-<pre><code>## Warning: package &#39;lmerTest&#39; was built under R version 4.5.2</code></pre>
-<pre><code>## 
-## Attaching package: &#39;lmerTest&#39;</code></pre>
-<pre><code>## The following object is masked from &#39;package:lme4&#39;:
-## 
-##     lmer</code></pre>
-<pre><code>## The following object is masked from &#39;package:stats&#39;:
-## 
-##     step</code></pre>
 <pre class="r"><code>get_gof(model_1_moderating)</code></pre>
 <pre><code>##       aic      bic r2.conditional r2.marginal       icc     rmse nobs
 ## 1 25870.4 25946.37      0.5076962  0.05457018 0.4792804 2.998226 4148</code></pre>
+<pre class="r"><code>F_to_eta2(20.5901 ,1,3962.2 ) #mh_y_upps__pers_sum                          </code></pre>
+<pre><code>## Eta2 (partial) |       95% CI
+## -----------------------------
+## 5.17e-03       | [0.00, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at [1.00].</code></pre>
+<pre class="r"><code>F_to_eta2(88.0050 ,1,3906.1 ) #mh_y_upps__nurg_sum                         </code></pre>
+<pre><code>## Eta2 (partial) |       95% CI
+## -----------------------------
+## 0.02           | [0.02, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at [1.00].</code></pre>
+<pre class="r"><code>F_to_eta2(7.5574,1,309.8  ) #le_l_coi__addr1__coi__total__national_score  </code></pre>
+<pre><code>## Eta2 (partial) |       95% CI
+## -----------------------------
+## 0.02           | [0.00, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at [1.00].</code></pre>
+<pre class="r"><code>F_to_eta2(9.8379  ,1,4132.1  ) #days_g_90_site:ab_g_stc__cohort_sex   </code></pre>
+<pre><code>## Eta2 (partial) |       95% CI
+## -----------------------------
+## 2.38e-03       | [0.00, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at [1.00].</code></pre>
 <pre class="r"><code># Interpretation of values
 # The a linear mixed effects model analyzing the relationship between externalizing symptoms and included the moderating effect of extreme heat on cohort sex. The model included area deprivation national score, behavioral inhibition score, days exposed to extreme heat, UPPS perserverance score, UPPS negative urgency score, and child oppertunity index national score.
 # Analysis revealed a significant moderating effect of extreme heat on cohort sex (beta =  -0.24, SE = 0.005, t = -2.75, p = 0.002). 
@@ -720,7 +816,7 @@ coefs</code></pre>
 
 # Unsure of whether it&#39;s relevant to report on multicolinearity here</code></pre>
 <div id="model-1-observing-effects-of-covariates-with-heat-as-a-moderator" class="section level3">
-<h3>Model 1 observing effects of covariates with heat as a
+<h3>3. Model 1 observing effects of covariates with heat as a
 moderator</h3>
 <pre class="r"><code># Had to drop SVI due to high MC (&gt;3)
 model_1a = lmer(
@@ -1008,14 +1104,57 @@ print(slopes1a)</code></pre>
 ## Degrees-of-freedom method: kenward-roger 
 ## Confidence level used: 0.95 
 ## Conf-level adjustment: bonferroni method for 2 estimates</code></pre>
+<pre class="r"><code>effectssize1a = standardize_parameters(model_1a,
+                                       method = &quot;refit&quot;)
+print(effectssize1a)</code></pre>
+<pre><code>## # Standardization method: refit
+## 
+## Parameter                                                | Std. Coef. |         95% CI
+## --------------------------------------------------------------------------------------
+## (Intercept)                                              |       0.07 | [ 0.01,  0.13]
+## days g 90 site                                           |       0.05 | [ 0.01,  0.10]
+## le l adi addr1 national prcnt                            |       0.04 | [-0.02,  0.10]
+## mh y bisbas bis sum v01                                  |  -5.00e-03 | [-0.03,  0.02]
+## ab g stc cohort sex [2]                                  |      -0.17 | [-0.23, -0.11]
+## mh y upps pers sum                                       |       0.07 | [ 0.04,  0.10]
+## mh y upps nurg sum                                       |       0.15 | [ 0.12,  0.18]
+## le l coi addr1 coi total national score                  |      -0.08 | [-0.14, -0.02]
+## days g 90 site × le l adi addr1 national prcnt           |       0.02 | [-0.03,  0.06]
+## days g 90 site × mh y bisbas bis sum v01                 |  -7.36e-03 | [-0.04,  0.02]
+## days g 90 site × ab g stc cohort sex [2]                 |      -0.10 | [-0.16, -0.04]
+## days g 90 site × mh y upps pers sum                      |  -4.22e-03 | [-0.03,  0.02]
+## days g 90 site × mh y upps nurg sum                      |      -0.01 | [-0.04,  0.02]
+## days g 90 site × le l coi addr1 coi total national score |   7.77e-03 | [-0.04,  0.06]</code></pre>
+<pre class="r"><code>F_to_eta2(6.0395,1,4007.4) #for perseverence</code></pre>
+<pre><code>## Eta2 (partial) |       95% CI
+## -----------------------------
+## 1.50e-03       | [0.00, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at [1.00].</code></pre>
+<pre class="r"><code>F_to_eta2(29.0626 ,1,3932.9) #for negative urgency</code></pre>
+<pre><code>## Eta2 (partial) |       95% CI
+## -----------------------------
+## 7.34e-03       | [0.00, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at [1.00].</code></pre>
+<pre class="r"><code>F_to_eta2(10.1993, 1, 4127.7) # days_g_90_site:ab_g_stc__cohort_sex</code></pre>
+<pre><code>## Eta2 (partial) |       95% CI
+## -----------------------------
+## 2.46e-03       | [0.00, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at [1.00].</code></pre>
+<pre class="r"><code># poweranalysis1 &lt;- powerSim(model_1a,
+#                            test = fixed (&quot;days_g_90_site:ab_g_stc__cohort_sex2&quot;, method = &quot;kr&quot;),
+#                            nsim = 1000)
+# print(poweranalysis1)</code></pre>
 </div>
 <div id="model-1-observing-effects-of-covariates-with-heat-as-a-moderator-for-males" class="section level3">
-<h3>Model 1 observing effects of covariates with heat as a moderator for
-males</h3>
+<h3>4. Model 1 observing effects of covariates with heat as a moderator
+for males</h3>
 <pre class="r"><code># Had to drop SVI due to high MC (&gt;3)
 model_1a_male = lmer(
   mh_p_cbcl__synd__ext_sum ~
-    days_g_90_site +
+    days_g_90_site *
     (le_l_adi__addr1__national_prcnt + mh_y_bisbas__bis_sum__v01 +
     # # ab_g_stc__cohort_sex +
     mh_y_upps__pers_sum + mh_y_upps__nurg_sum +
@@ -1029,7 +1168,7 @@ summary(model_1a_male)</code></pre>
 <pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
 ## lmerModLmerTest]
 ## Formula: 
-## mh_p_cbcl__synd__ext_sum ~ days_g_90_site + (le_l_adi__addr1__national_prcnt +  
+## mh_p_cbcl__synd__ext_sum ~ days_g_90_site * (le_l_adi__addr1__national_prcnt +  
 ##     mh_y_bisbas__bis_sum__v01 + mh_y_upps__pers_sum + mh_y_upps__nurg_sum +  
 ##     le_l_coi__addr1__coi__total__national_score) + (1 | site_char) +  
 ##     (1 | ab_g_stc__design_id__fam)
@@ -1037,93 +1176,234 @@ summary(model_1a_male)</code></pre>
 ## abcd_f1[(abcd_f1$days_g_90_site &gt; 0) &amp; (abcd_f1$ab_g_stc__cohort_sex ==  
 ##     1), ]
 ## 
-## REML criterion at convergence: 13708.6
+## REML criterion at convergence: 13740.9
 ## 
 ## Scaled residuals: 
 ##     Min      1Q  Median      3Q     Max 
-## -2.0746 -0.4594 -0.2009  0.2577  4.8006 
+## -2.0650 -0.4526 -0.2040  0.2648  4.7404 
 ## 
 ## Random effects:
 ##  Groups                   Name        Variance Std.Dev.
-##  ab_g_stc__design_id__fam (Intercept) 17.9829  4.2406  
-##  site_char                (Intercept)  0.3662  0.6052  
-##  Residual                             17.3937  4.1706  
+##  ab_g_stc__design_id__fam (Intercept) 18.0191  4.2449  
+##  site_char                (Intercept)  0.3744  0.6119  
+##  Residual                             17.3566  4.1661  
 ## Number of obs: 2144, groups:  ab_g_stc__design_id__fam, 1936; site_char, 22
 ## 
 ## Fixed effects:
-##                                               Estimate Std. Error         df
-## (Intercept)                                  5.766e-01  1.003e+00  2.513e+02
-## days_g_90_site                               1.320e-01  6.369e-02  7.502e+02
-## le_l_adi__addr1__national_prcnt              8.691e-03  8.992e-03  9.734e+01
-## mh_y_bisbas__bis_sum__v01                   -3.246e-02  4.495e-02  1.951e+03
-## mh_y_upps__pers_sum                          1.962e-01  5.623e-02  2.049e+03
-## mh_y_upps__nurg_sum                          3.782e-01  4.984e-02  2.003e+03
-## le_l_coi__addr1__coi__total__national_score -1.776e-02  7.568e-03  1.769e+02
-##                                             t value Pr(&gt;|t|)    
-## (Intercept)                                   0.575 0.565986    
-## days_g_90_site                                2.073 0.038507 *  
-## le_l_adi__addr1__national_prcnt               0.966 0.336202    
-## mh_y_bisbas__bis_sum__v01                    -0.722 0.470273    
-## mh_y_upps__pers_sum                           3.488 0.000496 ***
-## mh_y_upps__nurg_sum                           7.588 4.96e-14 ***
-## le_l_coi__addr1__coi__total__national_score  -2.346 0.020067 *  
+##                                                              Estimate
+## (Intercept)                                                 3.904e-02
+## days_g_90_site                                              2.769e-01
+## le_l_adi__addr1__national_prcnt                             4.148e-03
+## mh_y_bisbas__bis_sum__v01                                   7.917e-03
+## mh_y_upps__pers_sum                                         1.183e-01
+## mh_y_upps__nurg_sum                                         4.153e-01
+## le_l_coi__addr1__coi__total__national_score                -4.789e-03
+## days_g_90_site:le_l_adi__addr1__national_prcnt              8.626e-04
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                   -9.168e-03
+## days_g_90_site:mh_y_upps__pers_sum                          1.956e-02
+## days_g_90_site:mh_y_upps__nurg_sum                         -9.329e-03
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score -3.451e-03
+##                                                            Std. Error
+## (Intercept)                                                 1.843e+00
+## days_g_90_site                                              4.056e-01
+## le_l_adi__addr1__national_prcnt                             1.629e-02
+## mh_y_bisbas__bis_sum__v01                                   9.275e-02
+## mh_y_upps__pers_sum                                         1.143e-01
+## mh_y_upps__nurg_sum                                         1.030e-01
+## le_l_coi__addr1__coi__total__national_score                 1.395e-02
+## days_g_90_site:le_l_adi__addr1__national_prcnt              3.479e-03
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                    2.030e-02
+## days_g_90_site:mh_y_upps__pers_sum                          2.478e-02
+## days_g_90_site:mh_y_upps__nurg_sum                          2.209e-02
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score  3.096e-03
+##                                                                    df t value
+## (Intercept)                                                 1.034e+03   0.021
+## days_g_90_site                                              2.126e+03   0.683
+## le_l_adi__addr1__national_prcnt                             4.082e+02   0.255
+## mh_y_bisbas__bis_sum__v01                                   1.955e+03   0.085
+## mh_y_upps__pers_sum                                         2.013e+03   1.035
+## mh_y_upps__nurg_sum                                         2.047e+03   4.033
+## le_l_coi__addr1__coi__total__national_score                 6.665e+02  -0.343
+## days_g_90_site:le_l_adi__addr1__national_prcnt              1.862e+03   0.248
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                    1.987e+03  -0.452
+## days_g_90_site:mh_y_upps__pers_sum                          2.029e+03   0.790
+## days_g_90_site:mh_y_upps__nurg_sum                          2.000e+03  -0.422
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score  1.946e+03  -1.115
+##                                                            Pr(&gt;|t|)    
+## (Intercept)                                                   0.983    
+## days_g_90_site                                                0.495    
+## le_l_adi__addr1__national_prcnt                               0.799    
+## mh_y_bisbas__bis_sum__v01                                     0.932    
+## mh_y_upps__pers_sum                                           0.301    
+## mh_y_upps__nurg_sum                                         5.7e-05 ***
+## le_l_coi__addr1__coi__total__national_score                   0.732    
+## days_g_90_site:le_l_adi__addr1__national_prcnt                0.804    
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                      0.652    
+## days_g_90_site:mh_y_upps__pers_sum                            0.430    
+## days_g_90_site:mh_y_upps__nurg_sum                            0.673    
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score    0.265    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## Correlation of Fixed Effects:
-##              (Intr) d__90_ l_l___1___ m______ mh_y_pps__p_ mh_y_pps__n_
-## dys_g_90_st  -0.208                                                    
-## l_l_d__1___  -0.690 -0.047                                             
-## mh_______01  -0.172 -0.029 -0.009                                      
-## mh_y_pps__p_ -0.351 -0.033 -0.030      0.099                           
-## mh_y_pps__n_ -0.361  0.015  0.001     -0.214  -0.112                   
-## l____1_____  -0.732  0.002  0.802     -0.006  -0.029        0.035</code></pre>
+##                          (Intr) dy__90_ l_l___1___ m______ mh_y_pps__p_
+## dys_g_90_st              -0.846                                        
+## l_l_d__1___              -0.666  0.547                                 
+## mh_______01              -0.188  0.173  -0.002                         
+## mh_y_pps__p_             -0.401  0.344  -0.018      0.051              
+## mh_y_pps__n_             -0.389  0.340  -0.030     -0.217  -0.096      
+## l____1_____              -0.717  0.599   0.760      0.018  -0.010      
+## dy__90_:____1___          0.565 -0.680  -0.832      0.000   0.014      
+## d__90_:______             0.170 -0.207   0.002     -0.874  -0.047      
+## dys_g_90_st:mh_y_pps__p_  0.349 -0.394   0.018     -0.050  -0.870      
+## dys_g_90_st:mh_y_pps__n_  0.350 -0.403   0.017      0.181   0.084      
+## d__90_:____1____          0.597 -0.714  -0.618     -0.011   0.007      
+##                          mh_y_pps__n_ l____1____ dy__90_:____1___ d__90_:______
+## dys_g_90_st                                                                    
+## l_l_d__1___                                                                    
+## mh_______01                                                                    
+## mh_y_pps__p_                                                                   
+## mh_y_pps__n_                                                                   
+## l____1_____               0.015                                                
+## dy__90_:____1___          0.018       -0.643                                   
+## d__90_:______             0.179       -0.010     -0.004                        
+## dys_g_90_st:mh_y_pps__p_  0.082        0.013     -0.025            0.075       
+## dys_g_90_st:mh_y_pps__n_ -0.875       -0.021      0.000           -0.194       
+## d__90_:____1____         -0.020       -0.839      0.766           -0.002       
+##                          dys_g_90_st:mh_y_pps__p_ dys_g_90_st:mh_y_pps__n_
+## dys_g_90_st                                                               
+## l_l_d__1___                                                               
+## mh_______01                                                               
+## mh_y_pps__p_                                                              
+## mh_y_pps__n_                                                              
+## l____1_____                                                               
+## dy__90_:____1___                                                          
+## d__90_:______                                                             
+## dys_g_90_st:mh_y_pps__p_                                                  
+## dys_g_90_st:mh_y_pps__n_ -0.098                                           
+## d__90_:____1____         -0.022                    0.041</code></pre>
 <pre class="r"><code>anova(model_1a_male)</code></pre>
 <pre><code>## Type III Analysis of Variance Table with Satterthwaite&#39;s method
-##                                              Sum Sq Mean Sq NumDF   DenDF
-## days_g_90_site                                74.75   74.75     1  750.21
-## le_l_adi__addr1__national_prcnt               16.25   16.25     1   97.34
-## mh_y_bisbas__bis_sum__v01                      9.07    9.07     1 1950.71
-## mh_y_upps__pers_sum                          211.65  211.65     1 2048.70
-## mh_y_upps__nurg_sum                         1001.39 1001.39     1 2003.15
-## le_l_coi__addr1__coi__total__national_score   95.76   95.76     1  176.90
-##                                             F value    Pr(&gt;F)    
-## days_g_90_site                               4.2976 0.0385072 *  
-## le_l_adi__addr1__national_prcnt              0.9341 0.3362019    
-## mh_y_bisbas__bis_sum__v01                    0.5215 0.4702729    
-## mh_y_upps__pers_sum                         12.1683 0.0004963 ***
-## mh_y_upps__nurg_sum                         57.5719 4.959e-14 ***
-## le_l_coi__addr1__coi__total__national_score  5.5052 0.0200673 *  
+##                                                             Sum Sq Mean Sq
+## days_g_90_site                                               8.089   8.089
+## le_l_adi__addr1__national_prcnt                              1.125   1.125
+## mh_y_bisbas__bis_sum__v01                                    0.126   0.126
+## mh_y_upps__pers_sum                                         18.592  18.592
+## mh_y_upps__nurg_sum                                        282.369 282.369
+## le_l_coi__addr1__coi__total__national_score                  2.045   2.045
+## days_g_90_site:le_l_adi__addr1__national_prcnt               1.067   1.067
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                     3.540   3.540
+## days_g_90_site:mh_y_upps__pers_sum                          10.821  10.821
+## days_g_90_site:mh_y_upps__nurg_sum                           3.095   3.095
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score  21.566  21.566
+##                                                            NumDF  DenDF F value
+## days_g_90_site                                                 1 2126.4  0.4661
+## le_l_adi__addr1__national_prcnt                                1  408.2  0.0648
+## mh_y_bisbas__bis_sum__v01                                      1 1955.1  0.0073
+## mh_y_upps__pers_sum                                            1 2013.1  1.0712
+## mh_y_upps__nurg_sum                                            1 2047.4 16.2687
+## le_l_coi__addr1__coi__total__national_score                    1  666.5  0.1178
+## days_g_90_site:le_l_adi__addr1__national_prcnt                 1 1862.5  0.0615
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                       1 1987.2  0.2039
+## days_g_90_site:mh_y_upps__pers_sum                             1 2028.8  0.6234
+## days_g_90_site:mh_y_upps__nurg_sum                             1 1999.5  0.1783
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score     1 1945.8  1.2425
+##                                                               Pr(&gt;F)    
+## days_g_90_site                                                0.4949    
+## le_l_adi__addr1__national_prcnt                               0.7991    
+## mh_y_bisbas__bis_sum__v01                                     0.9320    
+## mh_y_upps__pers_sum                                           0.3008    
+## mh_y_upps__nurg_sum                                        5.698e-05 ***
+## le_l_coi__addr1__coi__total__national_score                   0.7315    
+## days_g_90_site:le_l_adi__addr1__national_prcnt                0.8042    
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                      0.6516    
+## days_g_90_site:mh_y_upps__pers_sum                            0.4299    
+## days_g_90_site:mh_y_upps__nurg_sum                            0.6729    
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score    0.2651    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <pre class="r"><code>coefs &lt;- data.frame(coef(summary(model_1a_male)))
 # use normal distribution to approximate p-value
 coefs$p.z &lt;- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs</code></pre>
-<pre><code>##                                                 Estimate  Std..Error         df
-## (Intercept)                                  0.576553934 1.003167602  251.32511
-## days_g_90_site                               0.132030994 0.063688842  750.20994
-## le_l_adi__addr1__national_prcnt              0.008690541 0.008992001   97.33737
-## mh_y_bisbas__bis_sum__v01                   -0.032461327 0.044949340 1950.71089
-## mh_y_upps__pers_sum                          0.196155043 0.056232031 2048.70041
-## mh_y_upps__nurg_sum                          0.378199991 0.049844367 2003.14916
-## le_l_coi__addr1__coi__total__national_score -0.017756541 0.007567821  176.89572
-##                                                t.value     Pr...t..
-## (Intercept)                                  0.5747334 5.659857e-01
-## days_g_90_site                               2.0730632 3.850725e-02
-## le_l_adi__addr1__national_prcnt              0.9664747 3.362019e-01
-## mh_y_bisbas__bis_sum__v01                   -0.7221758 4.702729e-01
-## mh_y_upps__pers_sum                          3.4883151 4.963339e-04
-## mh_y_upps__nurg_sum                          7.5876176 4.958995e-14
-## le_l_coi__addr1__coi__total__national_score -2.3463215 2.006726e-02
-##                                                      p.z
-## (Intercept)                                 5.654716e-01
-## days_g_90_site                              3.816640e-02
-## le_l_adi__addr1__national_prcnt             3.338067e-01
-## mh_y_bisbas__bis_sum__v01                   4.701864e-01
-## mh_y_upps__pers_sum                         4.860748e-04
-## mh_y_upps__nurg_sum                         3.264056e-14
-## le_l_coi__addr1__coi__total__national_score 1.895975e-02</code></pre>
+<pre><code>##                                                                 Estimate
+## (Intercept)                                                 0.0390375270
+## days_g_90_site                                              0.2768934858
+## le_l_adi__addr1__national_prcnt                             0.0041480480
+## mh_y_bisbas__bis_sum__v01                                   0.0079169571
+## mh_y_upps__pers_sum                                         0.1183469644
+## mh_y_upps__nurg_sum                                         0.4153252120
+## le_l_coi__addr1__coi__total__national_score                -0.0047885112
+## days_g_90_site:le_l_adi__addr1__national_prcnt              0.0008626391
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                   -0.0091678770
+## days_g_90_site:mh_y_upps__pers_sum                          0.0195637203
+## days_g_90_site:mh_y_upps__nurg_sum                         -0.0093289472
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score -0.0034506158
+##                                                             Std..Error
+## (Intercept)                                                1.842893602
+## days_g_90_site                                             0.405597099
+## le_l_adi__addr1__national_prcnt                            0.016289473
+## mh_y_bisbas__bis_sum__v01                                  0.092752639
+## mh_y_upps__pers_sum                                        0.114346947
+## mh_y_upps__nurg_sum                                        0.102970130
+## le_l_coi__addr1__coi__total__national_score                0.013950120
+## days_g_90_site:le_l_adi__addr1__national_prcnt             0.003478659
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                   0.020301115
+## days_g_90_site:mh_y_upps__pers_sum                         0.024777558
+## days_g_90_site:mh_y_upps__nurg_sum                         0.022091384
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score 0.003095598
+##                                                                   df
+## (Intercept)                                                1033.5213
+## days_g_90_site                                             2126.3732
+## le_l_adi__addr1__national_prcnt                             408.2031
+## mh_y_bisbas__bis_sum__v01                                  1955.0974
+## mh_y_upps__pers_sum                                        2013.0726
+## mh_y_upps__nurg_sum                                        2047.4111
+## le_l_coi__addr1__coi__total__national_score                 666.5004
+## days_g_90_site:le_l_adi__addr1__national_prcnt             1862.4914
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                   1987.1722
+## days_g_90_site:mh_y_upps__pers_sum                         2028.7770
+## days_g_90_site:mh_y_upps__nurg_sum                         1999.5131
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score 1945.8180
+##                                                                t.value
+## (Intercept)                                                 0.02118274
+## days_g_90_site                                              0.68268113
+## le_l_adi__addr1__national_prcnt                             0.25464594
+## mh_y_bisbas__bis_sum__v01                                   0.08535560
+## mh_y_upps__pers_sum                                         1.03498141
+## mh_y_upps__nurg_sum                                         4.03345333
+## le_l_coi__addr1__coi__total__national_score                -0.34325951
+## days_g_90_site:le_l_adi__addr1__national_prcnt              0.24798032
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                   -0.45159475
+## days_g_90_site:mh_y_upps__pers_sum                          0.78957419
+## days_g_90_site:mh_y_upps__nurg_sum                         -0.42228894
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score -1.11468467
+##                                                                Pr...t..
+## (Intercept)                                                9.831040e-01
+## days_g_90_site                                             4.948827e-01
+## le_l_adi__addr1__national_prcnt                            7.991248e-01
+## mh_y_bisbas__bis_sum__v01                                  9.319874e-01
+## mh_y_upps__pers_sum                                        3.008019e-01
+## mh_y_upps__nurg_sum                                        5.697919e-05
+## le_l_coi__addr1__coi__total__national_score                7.315115e-01
+## days_g_90_site:le_l_adi__addr1__national_prcnt             8.041770e-01
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                   6.516102e-01
+## days_g_90_site:mh_y_upps__pers_sum                         4.298688e-01
+## days_g_90_site:mh_y_upps__nurg_sum                         6.728595e-01
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score 2.651232e-01
+##                                                                     p.z
+## (Intercept)                                                0.9830998866
+## days_g_90_site                                             0.4948083560
+## le_l_adi__addr1__national_prcnt                            0.7989965769
+## mh_y_bisbas__bis_sum__v01                                  0.9319786909
+## mh_y_upps__pers_sum                                        0.3006775916
+## mh_y_upps__nurg_sum                                        0.0000549631
+## le_l_coi__addr1__coi__total__national_score                0.7314032403
+## days_g_90_site:le_l_adi__addr1__national_prcnt             0.8041496332
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                   0.6515609533
+## days_g_90_site:mh_y_upps__pers_sum                         0.4297764867
+## days_g_90_site:mh_y_upps__nurg_sum                         0.6728141300
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score 0.2649855740</code></pre>
 <pre class="r"><code># car::vif(model_1a_male)
 
 # Further analysis looked at the male sex cohort separately to understand the moderating effect of extreme heat on externalizing behaviors. The model revealed that extreme heat was significantly associated with externalizing behaviors in the male cohort (beta = 0.16, SE = 0.07, t = 2.40. p = 0.02).
@@ -1132,29 +1412,40 @@ coefs</code></pre>
 standardize_parameters(model_1a_male, method = &quot;refit&quot;)</code></pre>
 <pre><code>## # Standardization method: refit
 ## 
-## Parameter                               | Std. Coef. |         95% CI
-## ---------------------------------------------------------------------
-## (Intercept)                             |  -5.49e-03 | [-0.07,  0.06]
-## days g 90 site                          |       0.05 | [ 0.00,  0.09]
-## le l adi addr1 national prcnt           |       0.04 | [-0.04,  0.12]
-## mh y bisbas bis sum v01                 |      -0.02 | [-0.06,  0.03]
-## mh y upps pers sum                      |       0.07 | [ 0.03,  0.11]
-## mh y upps nurg sum                      |       0.16 | [ 0.12,  0.20]
-## le l coi addr1 coi total national score |      -0.09 | [-0.16, -0.01]</code></pre>
-<pre class="r"><code>F_to_eta2(4.2976,1,750.21) #very small effect when looking at  f value of days of 90 site from anova</code></pre>
+## Parameter                                                | Std. Coef. |         95% CI
+## --------------------------------------------------------------------------------------
+## (Intercept)                                              |      -0.01 | [-0.07,  0.05]
+## days g 90 site                                           |       0.05 | [ 0.00,  0.09]
+## le l adi addr1 national prcnt                            |       0.03 | [-0.05,  0.11]
+## mh y bisbas bis sum v01                                  |      -0.01 | [-0.05,  0.03]
+## mh y upps pers sum                                       |       0.07 | [ 0.03,  0.11]
+## mh y upps nurg sum                                       |       0.16 | [ 0.12,  0.20]
+## le l coi addr1 coi total national score                  |      -0.09 | [-0.17, -0.02]
+## days g 90 site × le l adi addr1 national prcnt           |   8.52e-03 | [-0.06,  0.08]
+## days g 90 site × mh y bisbas bis sum v01                 |  -9.51e-03 | [-0.05,  0.03]
+## days g 90 site × mh y upps pers sum                      |       0.02 | [-0.02,  0.06]
+## days g 90 site × mh y upps nurg sum                      |  -8.83e-03 | [-0.05,  0.03]
+## days g 90 site × le l coi addr1 coi total national score |      -0.04 | [-0.11,  0.03]</code></pre>
+<pre class="r"><code>F_to_eta2(16.268,1,2047.4) #mh_y_upps__nurg_sum</code></pre>
 <pre><code>## Eta2 (partial) |       95% CI
 ## -----------------------------
-## 5.70e-03       | [0.00, 1.00]
+## 7.88e-03       | [0.00, 1.00]
 ## 
 ## - One-sided CIs: upper bound fixed at [1.00].</code></pre>
+<pre class="r"><code># poweranalysis1a_nurg &lt;- powerSim(model_1a_male,
+#                            test = fixed (&quot;mh_y_upps__pers_sum&quot;, method = &quot;kr&quot;),
+#                            nsim = 1000)
+# 
+# 
+# print(poweranalysis1a_nurg)</code></pre>
 </div>
 <div id="model-1-observing-effects-of-covariates-with-heat-as-a-moderator-for-females" class="section level3">
-<h3>Model 1 observing effects of covariates with heat as a moderator for
-females</h3>
+<h3>5. Model 1 observing effects of covariates with heat as a moderator
+for females</h3>
 <pre class="r"><code># Had to drop SVI due to high MC (&gt;3)
 model_1a_female = lmer(
   mh_p_cbcl__synd__ext_sum ~
-    days_g_90_site +
+    days_g_90_site *
     (le_l_adi__addr1__national_prcnt + mh_y_bisbas__bis_sum__v01 +
     # ab_g_stc__cohort_sex +
     mh_y_upps__pers_sum + mh_y_upps__nurg_sum +
@@ -1168,7 +1459,7 @@ summary(model_1a_female)</code></pre>
 <pre><code>## Linear mixed model fit by REML. t-tests use Satterthwaite&#39;s method [
 ## lmerModLmerTest]
 ## Formula: 
-## mh_p_cbcl__synd__ext_sum ~ days_g_90_site + (le_l_adi__addr1__national_prcnt +  
+## mh_p_cbcl__synd__ext_sum ~ days_g_90_site * (le_l_adi__addr1__national_prcnt +  
 ##     mh_y_bisbas__bis_sum__v01 + mh_y_upps__pers_sum + mh_y_upps__nurg_sum +  
 ##     le_l_coi__addr1__coi__total__national_score) + (1 | site_char) +  
 ##     (1 | ab_g_stc__design_id__fam)
@@ -1176,107 +1467,279 @@ summary(model_1a_female)</code></pre>
 ## abcd_f1[(abcd_f1$days_g_90_site &gt; 0) &amp; (abcd_f1$ab_g_stc__cohort_sex ==  
 ##     2), ]
 ## 
-## REML criterion at convergence: 12124.9
+## REML criterion at convergence: 12154.5
 ## 
 ## Scaled residuals: 
 ##     Min      1Q  Median      3Q     Max 
-## -1.9398 -0.4733 -0.2358  0.2597  5.1088 
+## -1.9585 -0.4714 -0.2262  0.2591  5.2023 
 ## 
 ## Random effects:
 ##  Groups                   Name        Variance Std.Dev.
-##  ab_g_stc__design_id__fam (Intercept) 11.6646  3.415   
-##  site_char                (Intercept)  0.1722  0.415   
-##  Residual                             13.3287  3.651   
+##  ab_g_stc__design_id__fam (Intercept) 11.563   3.4005  
+##  site_char                (Intercept)  0.174   0.4171  
+##  Residual                             13.366   3.6559  
 ## Number of obs: 2004, groups:  ab_g_stc__design_id__fam, 1798; site_char, 22
 ## 
 ## Fixed effects:
-##                                               Estimate Std. Error         df
-## (Intercept)                                  1.124e+00  8.267e-01  2.882e+02
-## days_g_90_site                              -1.123e-01  5.404e-02  6.760e+02
-## le_l_adi__addr1__national_prcnt              1.235e-02  7.397e-03  1.151e+02
-## mh_y_bisbas__bis_sum__v01                    4.100e-02  4.093e-02  1.894e+03
-## mh_y_upps__pers_sum                          1.483e-01  4.988e-02  1.927e+03
-## mh_y_upps__nurg_sum                          2.215e-01  4.416e-02  1.946e+03
-## le_l_coi__addr1__coi__total__national_score -9.342e-03  6.414e-03  2.356e+02
-##                                             t value Pr(&gt;|t|)    
-## (Intercept)                                   1.360  0.17501    
-## days_g_90_site                               -2.078  0.03812 *  
-## le_l_adi__addr1__national_prcnt               1.670  0.09759 .  
-## mh_y_bisbas__bis_sum__v01                     1.002  0.31660    
-## mh_y_upps__pers_sum                           2.973  0.00299 ** 
-## mh_y_upps__nurg_sum                           5.015 5.79e-07 ***
-## le_l_coi__addr1__coi__total__national_score  -1.457  0.14658    
+##                                                              Estimate
+## (Intercept)                                                 1.225e+00
+## days_g_90_site                                             -1.780e-01
+## le_l_adi__addr1__national_prcnt                             3.013e-03
+## mh_y_bisbas__bis_sum__v01                                   1.166e-02
+## mh_y_upps__pers_sum                                         2.515e-01
+## mh_y_upps__nurg_sum                                         3.209e-01
+## le_l_coi__addr1__coi__total__national_score                -2.869e-02
+## days_g_90_site:le_l_adi__addr1__national_prcnt              2.825e-03
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                    6.251e-03
+## days_g_90_site:mh_y_upps__pers_sum                         -2.652e-02
+## days_g_90_site:mh_y_upps__nurg_sum                         -2.501e-02
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score  5.527e-03
+##                                                            Std. Error
+## (Intercept)                                                 1.500e+00
+## days_g_90_site                                              3.404e-01
+## le_l_adi__addr1__national_prcnt                             1.321e-02
+## mh_y_bisbas__bis_sum__v01                                   8.066e-02
+## mh_y_upps__pers_sum                                         1.011e-01
+## mh_y_upps__nurg_sum                                         8.690e-02
+## le_l_coi__addr1__coi__total__national_score                 1.147e-02
+## days_g_90_site:le_l_adi__addr1__national_prcnt              2.945e-03
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                    1.814e-02
+## days_g_90_site:mh_y_upps__pers_sum                          2.198e-02
+## days_g_90_site:mh_y_upps__nurg_sum                          1.940e-02
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score  2.699e-03
+##                                                                    df t value
+## (Intercept)                                                 1.095e+03   0.817
+## days_g_90_site                                              1.944e+03  -0.523
+## le_l_adi__addr1__national_prcnt                             5.584e+02   0.228
+## mh_y_bisbas__bis_sum__v01                                   1.850e+03   0.145
+## mh_y_upps__pers_sum                                         1.932e+03   2.488
+## mh_y_upps__nurg_sum                                         1.890e+03   3.693
+## le_l_coi__addr1__coi__total__national_score                 9.153e+02  -2.501
+## days_g_90_site:le_l_adi__addr1__national_prcnt              1.702e+03   0.959
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                    1.908e+03   0.345
+## days_g_90_site:mh_y_upps__pers_sum                          1.936e+03  -1.206
+## days_g_90_site:mh_y_upps__nurg_sum                          1.921e+03  -1.289
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score  1.831e+03   2.047
+##                                                            Pr(&gt;|t|)    
+## (Intercept)                                                0.414234    
+## days_g_90_site                                             0.601041    
+## le_l_adi__addr1__national_prcnt                            0.819667    
+## mh_y_bisbas__bis_sum__v01                                  0.885028    
+## mh_y_upps__pers_sum                                        0.012947 *  
+## mh_y_upps__nurg_sum                                        0.000228 ***
+## le_l_coi__addr1__coi__total__national_score                0.012545 *  
+## days_g_90_site:le_l_adi__addr1__national_prcnt             0.337529    
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                   0.730482    
+## days_g_90_site:mh_y_upps__pers_sum                         0.227786    
+## days_g_90_site:mh_y_upps__nurg_sum                         0.197494    
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score 0.040761 *  
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## Correlation of Fixed Effects:
-##              (Intr) d__90_ l_l___1___ m______ mh_y_pps__p_ mh_y_pps__n_
-## dys_g_90_st  -0.221                                                    
-## l_l_d__1___  -0.704 -0.039                                             
-## mh_______01  -0.140 -0.028 -0.022                                      
-## mh_y_pps__p_ -0.382 -0.018  0.009      0.070                           
-## mh_y_pps__n_ -0.282  0.001 -0.021     -0.337  -0.141                   
-## l____1_____  -0.743  0.017  0.799     -0.020   0.019       -0.001</code></pre>
+##                          (Intr) dy__90_ l_l___1___ m______ mh_y_pps__p_
+## dys_g_90_st              -0.842                                        
+## l_l_d__1___              -0.707  0.586                                 
+## mh_______01              -0.147  0.123  -0.016                         
+## mh_y_pps__p_             -0.431  0.358   0.038      0.002              
+## mh_y_pps__n_             -0.312  0.278  -0.016     -0.307  -0.142      
+## l____1_____              -0.736  0.623   0.774     -0.004   0.049      
+## dy__90_:____1___          0.596 -0.719  -0.827      0.030  -0.030      
+## d__90_:______             0.126 -0.144   0.024     -0.861  -0.009      
+## dys_g_90_st:mh_y_pps__p_  0.375 -0.410  -0.029     -0.010  -0.869      
+## dys_g_90_st:mh_y_pps__n_  0.280 -0.333   0.004      0.259   0.122      
+## d__90_:____1____          0.604 -0.740  -0.626      0.015  -0.034      
+##                          mh_y_pps__n_ l____1____ dy__90_:____1___ d__90_:______
+## dys_g_90_st                                                                    
+## l_l_d__1___                                                                    
+## mh_______01                                                                    
+## mh_y_pps__p_                                                                   
+## mh_y_pps__n_                                                                   
+## l____1_____              -0.005                                                
+## dy__90_:____1___          0.000       -0.657                                   
+## d__90_:______             0.259        0.012     -0.051                        
+## dys_g_90_st:mh_y_pps__p_  0.123       -0.036      0.019            0.044       
+## dys_g_90_st:mh_y_pps__n_ -0.861       -0.009      0.010           -0.305       
+## d__90_:____1____         -0.012       -0.829      0.786           -0.036       
+##                          dys_g_90_st:mh_y_pps__p_ dys_g_90_st:mh_y_pps__n_
+## dys_g_90_st                                                               
+## l_l_d__1___                                                               
+## mh_______01                                                               
+## mh_y_pps__p_                                                              
+## mh_y_pps__n_                                                              
+## l____1_____                                                               
+## dy__90_:____1___                                                          
+## d__90_:______                                                             
+## dys_g_90_st:mh_y_pps__p_                                                  
+## dys_g_90_st:mh_y_pps__n_ -0.141                                           
+## d__90_:____1____          0.022                    0.031</code></pre>
 <pre class="r"><code>anova(model_1a_female)</code></pre>
 <pre><code>## Type III Analysis of Variance Table with Satterthwaite&#39;s method
-##                                             Sum Sq Mean Sq NumDF   DenDF
-## days_g_90_site                               57.53   57.53     1  675.96
-## le_l_adi__addr1__national_prcnt              37.18   37.18     1  115.07
-## mh_y_bisbas__bis_sum__v01                    13.37   13.37     1 1894.00
-## mh_y_upps__pers_sum                         117.79  117.79     1 1927.08
-## mh_y_upps__nurg_sum                         335.20  335.20     1 1946.43
-## le_l_coi__addr1__coi__total__national_score  28.28   28.28     1  235.65
-##                                             F value   Pr(&gt;F)    
-## days_g_90_site                               4.3165 0.038122 *  
-## le_l_adi__addr1__national_prcnt              2.7897 0.097592 .  
-## mh_y_bisbas__bis_sum__v01                    1.0035 0.316602    
-## mh_y_upps__pers_sum                          8.8376 0.002987 ** 
-## mh_y_upps__nurg_sum                         25.1484 5.79e-07 ***
-## le_l_coi__addr1__coi__total__national_score  2.1215 0.146578    
+##                                                             Sum Sq Mean Sq
+## days_g_90_site                                               3.656   3.656
+## le_l_adi__addr1__national_prcnt                              0.695   0.695
+## mh_y_bisbas__bis_sum__v01                                    0.280   0.280
+## mh_y_upps__pers_sum                                         82.706  82.706
+## mh_y_upps__nurg_sum                                        182.275 182.275
+## le_l_coi__addr1__coi__total__national_score                 83.630  83.630
+## days_g_90_site:le_l_adi__addr1__national_prcnt              12.301  12.301
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                     1.587   1.587
+## days_g_90_site:mh_y_upps__pers_sum                          19.455  19.455
+## days_g_90_site:mh_y_upps__nurg_sum                          22.214  22.214
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score  56.028  56.028
+##                                                            NumDF   DenDF
+## days_g_90_site                                                 1 1943.99
+## le_l_adi__addr1__national_prcnt                                1  558.44
+## mh_y_bisbas__bis_sum__v01                                      1 1849.82
+## mh_y_upps__pers_sum                                            1 1932.38
+## mh_y_upps__nurg_sum                                            1 1890.35
+## le_l_coi__addr1__coi__total__national_score                    1  915.30
+## days_g_90_site:le_l_adi__addr1__national_prcnt                 1 1701.81
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                       1 1908.01
+## days_g_90_site:mh_y_upps__pers_sum                             1 1936.34
+## days_g_90_site:mh_y_upps__nurg_sum                             1 1921.24
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score     1 1830.61
+##                                                            F value   Pr(&gt;F)    
+## days_g_90_site                                              0.2735 0.601041    
+## le_l_adi__addr1__national_prcnt                             0.0520 0.819667    
+## mh_y_bisbas__bis_sum__v01                                   0.0209 0.885028    
+## mh_y_upps__pers_sum                                         6.1878 0.012947 *  
+## mh_y_upps__nurg_sum                                        13.6373 0.000228 ***
+## le_l_coi__addr1__coi__total__national_score                 6.2569 0.012545 *  
+## days_g_90_site:le_l_adi__addr1__national_prcnt              0.9203 0.337529    
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                    0.1187 0.730482    
+## days_g_90_site:mh_y_upps__pers_sum                          1.4556 0.227786    
+## days_g_90_site:mh_y_upps__nurg_sum                          1.6620 0.197494    
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score  4.1919 0.040761 *  
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <pre class="r"><code>coefs &lt;- data.frame(coef(summary(model_1a_female)))
 # use normal distribution to approximate p-value
 coefs$p.z &lt;- 2 * (1 - pnorm(abs(coefs$t.value)))
 coefs</code></pre>
-<pre><code>##                                                 Estimate  Std..Error        df
-## (Intercept)                                  1.124054251 0.826740028  288.1741
-## days_g_90_site                              -0.112275344 0.054040544  675.9583
-## le_l_adi__addr1__national_prcnt              0.012355051 0.007397224  115.0705
-## mh_y_bisbas__bis_sum__v01                    0.040999957 0.040929190 1894.0006
-## mh_y_upps__pers_sum                          0.148290997 0.049882385 1927.0807
-## mh_y_upps__nurg_sum                          0.221450333 0.044159165 1946.4312
-## le_l_coi__addr1__coi__total__national_score -0.009341776 0.006413728  235.6493
-##                                               t.value     Pr...t..          p.z
-## (Intercept)                                  1.359622 1.750123e-01 1.739494e-01
-## days_g_90_site                              -2.077613 3.812194e-02 3.774500e-02
-## le_l_adi__addr1__national_prcnt              1.670228 9.759223e-02 9.487423e-02
-## mh_y_bisbas__bis_sum__v01                    1.001729 3.166025e-01 3.164745e-01
-## mh_y_upps__pers_sum                          2.972813 2.987435e-03 2.950843e-03
-## mh_y_upps__nurg_sum                          5.014822 5.789962e-07 5.308269e-07
-## le_l_coi__addr1__coi__total__national_score -1.456528 1.465778e-01 1.452467e-01</code></pre>
+<pre><code>##                                                                Estimate
+## (Intercept)                                                 1.225283666
+## days_g_90_site                                             -0.178024783
+## le_l_adi__addr1__national_prcnt                             0.003012869
+## mh_y_bisbas__bis_sum__v01                                   0.011664371
+## mh_y_upps__pers_sum                                         0.251513414
+## mh_y_upps__nurg_sum                                         0.320897507
+## le_l_coi__addr1__coi__total__national_score                -0.028691482
+## days_g_90_site:le_l_adi__addr1__national_prcnt              0.002825327
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                    0.006251206
+## days_g_90_site:mh_y_upps__pers_sum                         -0.026522200
+## days_g_90_site:mh_y_upps__nurg_sum                         -0.025007304
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score  0.005526879
+##                                                             Std..Error
+## (Intercept)                                                1.500144547
+## days_g_90_site                                             0.340398257
+## le_l_adi__addr1__national_prcnt                            0.013209699
+## mh_y_bisbas__bis_sum__v01                                  0.080656475
+## mh_y_upps__pers_sum                                        0.101109420
+## mh_y_upps__nurg_sum                                        0.086896591
+## le_l_coi__addr1__coi__total__national_score                0.011470252
+## days_g_90_site:le_l_adi__addr1__national_prcnt             0.002945105
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                   0.018143925
+## days_g_90_site:mh_y_upps__pers_sum                         0.021983432
+## days_g_90_site:mh_y_upps__nurg_sum                         0.019397992
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score 0.002699460
+##                                                                   df    t.value
+## (Intercept)                                                1094.5710  0.8167771
+## days_g_90_site                                             1943.9855 -0.5229897
+## le_l_adi__addr1__national_prcnt                             558.4437  0.2280801
+## mh_y_bisbas__bis_sum__v01                                  1849.8171  0.1446179
+## mh_y_upps__pers_sum                                        1932.3755  2.4875369
+## mh_y_upps__nurg_sum                                        1890.3545  3.6928665
+## le_l_coi__addr1__coi__total__national_score                 915.2979 -2.5013820
+## days_g_90_site:le_l_adi__addr1__national_prcnt             1701.8073  0.9593297
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                   1908.0131  0.3445344
+## days_g_90_site:mh_y_upps__pers_sum                         1936.3388 -1.2064631
+## days_g_90_site:mh_y_upps__nurg_sum                         1921.2416 -1.2891697
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score 1830.6064  2.0474018
+##                                                                Pr...t..
+## (Intercept)                                                0.4142335681
+## days_g_90_site                                             0.6010410214
+## le_l_adi__addr1__national_prcnt                            0.8196674647
+## mh_y_bisbas__bis_sum__v01                                  0.8850283072
+## mh_y_upps__pers_sum                                        0.0129468668
+## mh_y_upps__nurg_sum                                        0.0002280346
+## le_l_coi__addr1__coi__total__national_score                0.0125446413
+## days_g_90_site:le_l_adi__addr1__national_prcnt             0.3375289313
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                   0.7304824255
+## days_g_90_site:mh_y_upps__pers_sum                         0.2277863519
+## days_g_90_site:mh_y_upps__nurg_sum                         0.1974942789
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score 0.0407611168
+##                                                                     p.z
+## (Intercept)                                                0.4140558390
+## days_g_90_site                                             0.6009814200
+## le_l_adi__addr1__national_prcnt                            0.8195839784
+## mh_y_bisbas__bis_sum__v01                                  0.8850125531
+## mh_y_upps__pers_sum                                        0.0128631108
+## mh_y_upps__nurg_sum                                        0.0002217405
+## le_l_coi__addr1__coi__total__national_score                0.0123709668
+## days_g_90_site:le_l_adi__addr1__national_prcnt             0.3373926601
+## days_g_90_site:mh_y_bisbas__bis_sum__v01                   0.7304444557
+## days_g_90_site:mh_y_upps__pers_sum                         0.2276389740
+## days_g_90_site:mh_y_upps__nurg_sum                         0.1973390902
+## days_g_90_site:le_l_coi__addr1__coi__total__national_score 0.0406186539</code></pre>
 <pre class="r"><code># car::vif(model_1a_female)
 # Looking at the female sex, the model revealed the moderating effect of extreme heat on externalizing behaviors for the female sex cohort was not significant (beta = - 0.09, SE = 0.06, t = -1.55, p = 0.12).
 
 standardize_parameters(model_1a_female, method = &quot;refit&quot;)</code></pre>
 <pre><code>## # Standardization method: refit
 ## 
-## Parameter                               | Std. Coef. |         95% CI
-## ---------------------------------------------------------------------
-## (Intercept)                             |  -3.71e-03 | [-0.06,  0.05]
-## days g 90 site                          |      -0.05 | [-0.10,  0.00]
-## le l adi addr1 national prcnt           |       0.07 | [-0.01,  0.15]
-## mh y bisbas bis sum v01                 |       0.02 | [-0.02,  0.07]
-## mh y upps pers sum                      |       0.06 | [ 0.02,  0.11]
-## mh y upps nurg sum                      |       0.12 | [ 0.07,  0.16]
-## le l coi addr1 coi total national score |      -0.06 | [-0.13,  0.02]</code></pre>
-<pre class="r"><code>F_to_eta2(4.3165 ,1,675.96) #very small effect when looking at  f value of days of 90 site from anova</code></pre>
+## Parameter                                                | Std. Coef. |        95% CI
+## -------------------------------------------------------------------------------------
+## (Intercept)                                              |   1.31e-03 | [-0.06, 0.06]
+## days g 90 site                                           |      -0.05 | [-0.09, 0.00]
+## le l adi addr1 national prcnt                            |       0.08 | [ 0.00, 0.16]
+## mh y bisbas bis sum v01                                  |       0.02 | [-0.02, 0.06]
+## mh y upps pers sum                                       |       0.06 | [ 0.02, 0.11]
+## mh y upps nurg sum                                       |       0.12 | [ 0.07, 0.16]
+## le l coi addr1 coi total national score                  |      -0.04 | [-0.12, 0.03]
+## days g 90 site × le l adi addr1 national prcnt           |       0.03 | [-0.04, 0.11]
+## days g 90 site × mh y bisbas bis sum v01                 |   7.80e-03 | [-0.04, 0.05]
+## days g 90 site × mh y upps pers sum                      |      -0.03 | [-0.07, 0.02]
+## days g 90 site × mh y upps nurg sum                      |      -0.03 | [-0.07, 0.02]
+## days g 90 site × le l coi addr1 coi total national score |       0.08 | [ 0.00, 0.15]</code></pre>
+<pre class="r"><code>F_to_eta2(6.1878 ,1,1932.38) #mh_y_upps__pers_sum</code></pre>
 <pre><code>## Eta2 (partial) |       95% CI
 ## -----------------------------
-## 6.35e-03       | [0.00, 1.00]
+## 3.19e-03       | [0.00, 1.00]
 ## 
 ## - One-sided CIs: upper bound fixed at [1.00].</code></pre>
-<p># Below is just testing for model 2 which includes the moderating
+<pre class="r"><code>F_to_eta2(13.6373,1,1890.35) #mh_y_upps__nurg_sum</code></pre>
+<pre><code>## Eta2 (partial) |       95% CI
+## -----------------------------
+## 7.16e-03       | [0.00, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at [1.00].</code></pre>
+<pre class="r"><code>F_to_eta2(6.2569,1,915.30) #le_l_coi__addr1__coi__total__national_score</code></pre>
+<pre><code>## Eta2 (partial) |       95% CI
+## -----------------------------
+## 6.79e-03       | [0.00, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at [1.00].</code></pre>
+<pre class="r"><code>F_to_eta2(4.1919 ,1,1830.61) #days_g_90_site:le_l_coi__addr1__coi__total__national_score </code></pre>
+<pre><code>## Eta2 (partial) |       95% CI
+## -----------------------------
+## 2.28e-03       | [0.00, 1.00]
+## 
+## - One-sided CIs: upper bound fixed at [1.00].</code></pre>
+<pre class="r"><code># poweranalysis1a_femaleupps &lt;- powerSim(model_1a_female,
+#                            test = fixed (&quot;mh_y_upps__pers_sum&quot;, method = &quot;kr&quot;),
+#                            nsim = 1000)
+# poweranalysis1a_femalenurg &lt;- powerSim(model_1a_female,
+#                            test = fixed (&quot;mh_y_upps__pers_sum&quot;, method = &quot;kr&quot;),
+#                            nsim = 1000)
+# poweranalysis1a_femalecoi &lt;- powerSim(model_1a_female,
+#                            test = fixed (&quot;mh_y_upps__pers_sum&quot;, method = &quot;kr&quot;),
+#                            nsim = 1000)
+
+# print(poweranalysis1a_femaleupps)
+# print(poweranalysis1a_femalenurg)
+# print(poweranalysis1a_femalecoi)</code></pre>
+<p># 6. Below is just testing for model 2 which includes the moderating
 effect of heat on all covariates? Unsure how to interpret</p>
 <pre class="r"><code>model_2 = lmer(
   mh_p_cbcl__synd__ext_sum ~
